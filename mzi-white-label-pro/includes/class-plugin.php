@@ -38,6 +38,7 @@ class MZI_White_Label_Pro_Plugin {
         require_once MZI_WLP_PATH . 'includes/modules/class-audit.php';
         require_once MZI_WLP_PATH . 'includes/modules/class-about.php';
         require_once MZI_WLP_PATH . 'includes/modules/class-shortcodes.php';
+        require_once MZI_WLP_PATH . 'includes/modules/class-maintenance.php';
     }
 
     private function register_modules() {
@@ -55,5 +56,6 @@ class MZI_White_Label_Pro_Plugin {
         new MZI_White_Label_Pro_Audit();
         new MZI_White_Label_Pro_About();
         new MZI_White_Label_Pro_Shortcodes();
+        new MZI_White_Label_Pro_Maintenance();
     }
 }

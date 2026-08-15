@@ -47,6 +47,7 @@ class MZI_White_Label_Pro_Settings {
             'favicon',
             'login_background',
             'default_featured_image',
+            'maintenance_logo',
         ];
 
         $email_fields = [
@@ -60,6 +61,8 @@ class MZI_White_Label_Pro_Settings {
             'disable_comments',
             'disable_heartbeat',
             'disable_xmlrpc',
+            'disable_rest_api',
+            'disable_rest_users',
             'dashboard_widget_enabled',
             'dashboard_hide_selected_widgets',
             'hide_login_back_to_site',
@@ -74,6 +77,7 @@ class MZI_White_Label_Pro_Settings {
             'disable_screen_options',
             'disable_help_tab',
             'enable_audit_trail',
+            'enable_maintenance_mode',
         ];
 
         foreach ($url_fields as $field) {
@@ -104,6 +108,8 @@ class MZI_White_Label_Pro_Settings {
             'smtp_host',
             'smtp_username',
             'smtp_password',
+            'maintenance_title',
+            'maintenance_headline',
         ];
 
         $textarea_fields = [
@@ -111,6 +117,9 @@ class MZI_White_Label_Pro_Settings {
             'menu_renames',
             'dashboard_widget_content',
             'login_custom_css',
+            'maintenance_message',
+            'custom_admin_css',
+            'custom_admin_js',
         ];
 
         $number_fields = [
@@ -122,18 +131,21 @@ class MZI_White_Label_Pro_Settings {
         $color_fields = [
             'login_background_color',
             'login_button_color',
+            'maintenance_bg_color',
         ];
 
         $array_fields = [
             'hidden_menus',
             'dashboard_hidden_widgets',
+            'client_mode_roles',
         ];
 
         $select_fields = [
-            'login_layout'        => ['normal', 'sidepanel_left', 'sidepanel_right'],
-            'login_form_position' => ['center', 'left', 'right'],
-            'mail_method'          => ['default', 'smtp'],
-            'smtp_encryption'     => ['none', 'ssl', 'tls'],
+            'login_layout'          => ['normal', 'sidepanel_left', 'sidepanel_right'],
+            'login_form_position'   => ['center', 'left', 'right'],
+            'mail_method'            => ['default', 'smtp'],
+            'smtp_encryption'       => ['none', 'ssl', 'tls'],
+            'maintenance_mode_type' => ['503', '200'],
         ];
 
         foreach ($text_fields as $field) {

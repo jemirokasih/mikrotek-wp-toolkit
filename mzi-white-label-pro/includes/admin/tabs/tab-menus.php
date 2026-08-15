@@ -5,6 +5,17 @@ if (!defined('ABSPATH')) {
 }
 
 return [
+    'client_mode_roles' => [
+        'label'       => 'Target Roles For Client Mode',
+        'type'        => 'checkbox_group',
+        'choices'     => [
+            'editor'      => 'Editor',
+            'author'      => 'Author',
+            'contributor' => 'Contributor',
+            'subscriber'  => 'Subscriber',
+        ],
+        'description' => 'Pilih role pengguna yang akan dikenakan pembatasan Client Mode. Jika kosong, aturan akan otomatis berlaku untuk seluruh pengguna non-administrator.',
+    ],
     'hidden_menus' => [
         'label'       => 'Hide Menus In Client Mode',
         'type'        => 'checkbox_group',
@@ -20,7 +31,7 @@ return [
             'tools.php'               => 'Tools',
             'options-general.php'     => 'Settings',
         ],
-        'description' => 'Hanya berlaku saat Client Mode aktif dan user bukan administrator. Menu Wordfence tetap dilindungi jika Compatibility Guard aktif.',
+        'description' => 'Menu yang akan disembunyikan untuk role target. Menu Wordfence tetap dilindungi jika Compatibility Guard aktif.',
     ],
     'custom_hidden_menus' => [
         'label'       => 'Custom Menu Slugs',

@@ -9,6 +9,7 @@ class MZI_White_Label_Pro_Misc {
     public function __construct() {
         add_action('admin_init', [$this, 'init_misc_features']);
         add_action('admin_head', [$this, 'inject_misc_styles']);
+        add_action('admin_footer', [$this, 'inject_custom_js']);
         add_action('admin_head', [$this, 'remove_help_tabs']);
         add_filter('screen_options_show_screen', [$this, 'toggle_screen_options']);
 
@@ -49,8 +50,20 @@ class MZI_White_Label_Pro_Misc {
             $css .= '.update-nag, #wp-admin-bar-updates, .update-core-count { display: none !important; }';
         }
 
+        $custom_admin_css = MZI_White_Label_Pro_Settings::get('custom_admin_css');
+        if (!empty($custom_admin_css)) {
+            $css .= "\n" . $custom_admin_css;
+        }
+
         if (!empty($css)) {
             echo '<style id="mzi-wlp-misc-css">' . esc_html($css) . '</style>';
+        }
+    }
+
+    public function inject_custom_js() {
+        $custom_admin_js = MZI_White_Label_Pro_Settings::get('custom_admin_js');
+        if (!empty($custom_admin_js)) {
+            echo '<script id="mzi-wlp-custom-admin-js">' . esc_html($custom_admin_js) . '</script>';
         }
     }
 

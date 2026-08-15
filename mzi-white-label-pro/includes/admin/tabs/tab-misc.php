@@ -6,6 +6,8 @@ if (!defined('ABSPATH')) {
 
 return [
     'default_featured_image'     => ['label' => 'Default Featured Image', 'type' => 'image', 'description' => 'Gambar default yang otomatis digunakan sebagai fallback jika post, page, atau custom post type tidak memiliki featured image.'],
+    'custom_admin_css'           => ['label' => 'Custom Admin CSS', 'type' => 'textarea', 'description' => 'Kode CSS kustom yang akan diinjeksikan secara otomatis ke seluruh area admin WordPress.'],
+    'custom_admin_js'            => ['label' => 'Custom Admin JS', 'type' => 'textarea', 'description' => 'Kode JavaScript kustom yang akan dieksekusi di bagian footer area admin WordPress.'],
     'hide_plugin_update_notices' => ['label' => 'Hide Plugin Update Notices', 'type' => 'checkbox', 'description' => 'Menyembunyikan notifikasi & badge pembaruan (update) plugin di area admin.'],
     'hide_theme_update_notices'  => ['label' => 'Hide Theme Update Notices', 'type' => 'checkbox', 'description' => 'Menyembunyikan notifikasi & badge pembaruan (update) tema di area admin.'],
     'hide_core_update_notices'   => ['label' => 'Hide Core WP Update Notices', 'type' => 'checkbox', 'description' => 'Menyembunyikan notifikasi & badge pembaruan versi inti WordPress.'],

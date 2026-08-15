@@ -24,6 +24,17 @@ class MZI_White_Label_Pro_Admin_Menu_Manager {
             return false;
         }
 
+        $user = wp_get_current_user();
+        if (!$user || !$user->exists()) {
+            return false;
+        }
+
+        $target_roles = MZI_White_Label_Pro_Settings::get('client_mode_roles', []);
+        if (is_array($target_roles) && !empty($target_roles)) {
+            $user_roles = (array) $user->roles;
+            return (bool) array_intersect($user_roles, $target_roles);
+        }
+
         return !current_user_can('administrator');
     }
 
