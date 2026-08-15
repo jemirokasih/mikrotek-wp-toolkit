@@ -4,55 +4,42 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class MZI_White_Label_Pro_About {
+class Mikrotek_WP_Toolkit_About {
 
     public static function render_about_page() {
         if (!current_user_can('manage_options')) {
-            wp_die(__('You do not have sufficient permissions to access this page.', 'mzi-white-label-pro'));
+            wp_die(__('You do not have sufficient permissions to access this page.', 'mikrotek-wp-toolkit'));
         }
 
-        $current_version = MZI_WLP_VERSION;
-        $latest_version  = MZI_WLP_VERSION;
-        $changelog       = class_exists('MZI_White_Label_Pro_Changelog') ? MZI_White_Label_Pro_Changelog::entries() : [];
-
-        $check_message = '';
-        if (isset($_POST['mzi_wlp_action']) && 'check_updates' === $_POST['mzi_wlp_action']) {
-            check_admin_referer('mzi_wlp_check_updates_action', 'mzi_wlp_nonce');
-            $check_message = 'Versi plugin Anda (' . $current_version . ') adalah versi terbaru. Tidak ada pembaharuan tersedia saat ini.';
-        }
+        $current_version = MIKROTEK_WPT_VERSION;
+        $changelog       = class_exists('Mikrotek_WP_Toolkit_Changelog') ? Mikrotek_WP_Toolkit_Changelog::entries() : [];
 
         ?>
-        <div class="wrap mzi-wlp-wrap">
-            <h1>Tentang MZI White Label Pro</h1>
+        <div class="wrap mikrotek-wpt-wrap">
+            <h1>Tentang Mikrotek WP Toolkit</h1>
             <p class="description">
-                Informasi versi plugin, status pembaharuan, ringkasan sistem, dan catatan perubahan (changelog).
+                Informasi versi plugin, ringkasan lingkungan sistem server, dan riwayat catatan perubahan (changelog).
             </p>
-
-            <?php if (!empty($check_message)) : ?>
-                <div class="notice notice-success is-dismissible" style="margin-top: 15px;">
-                    <p><strong><?php echo esc_html($check_message); ?></strong></p>
-                </div>
-            <?php endif; ?>
 
             <!-- Grid Layout -->
             <div style="display:grid;grid-template-columns: 2fr 1fr;gap:20px;margin-top:20px;">
                 <!-- Left Column -->
                 <div>
-                    <!-- Card 1: Informasi Plugin & Pembaharuan -->
-                    <div class="mzi-wlp-card">
+                    <!-- Card 1: Informasi Plugin -->
+                    <div class="mikrotek-wpt-card" style="background:#fff;border:1px solid #ccd0d4;padding:20px;border-radius:8px;">
                         <div style="display:flex;align-items:center;gap:15px;margin-bottom:15px;">
                             <div style="background:#4f46e5;color:#fff;width:54px;height:54px;border-radius:12px;display:flex;align-items:center;justify-content:center;">
                                 <span class="dashicons dashicons-admin-customizer" style="font-size:32px;width:32px;height:32px;"></span>
                             </div>
                             <div>
-                                <h2 style="margin:0;font-size:20px;">MZI White Label Pro</h2>
-                                <p class="description" style="margin:2px 0 0 0;">Solusi Lengkap White Label, Security, Redirection & Audit Trail WordPress.</p>
+                                <h2 style="margin:0;font-size:20px;">Mikrotek WP Toolkit</h2>
+                                <p class="description" style="margin:2px 0 0 0;">Solusi Lengkap White Label, Security, Redirection, Audit Trail, Shortcodes & Maintenance WordPress.</p>
                             </div>
                         </div>
 
                         <hr style="border:0;border-top:1px solid #e2e8f0;margin:15px 0;">
 
-                        <table class="form-table mzi-wlp-form-table" style="margin:0;">
+                        <table class="form-table mikrotek-wpt-form-table" style="margin:0;">
                             <tr>
                                 <th scope="row">Versi Terpasang</th>
                                 <td>
@@ -63,13 +50,13 @@ class MZI_White_Label_Pro_About {
                             </tr>
                             <tr>
                                 <th scope="row">Pengembang (Developer)</th>
-                                <td><strong>MZI Creative Team</strong></td>
+                                <td><strong>PT Mikrotek Zemiro Indonesia</strong></td>
                             </tr>
                         </table>
                     </div>
 
                     <!-- Card 2: Log Pembaharuan (Changelog) -->
-                    <div class="mzi-wlp-card" style="margin-top:20px;">
+                    <div class="mikrotek-wpt-card" style="background:#fff;border:1px solid #ccd0d4;padding:20px;border-radius:8px;margin-top:20px;">
                         <h2>Log Pembaharuan (Changelog)</h2>
                         <p class="description">Riwayat perubahan dan fitur baru pada setiap versi rilis.</p>
 
@@ -106,7 +93,7 @@ class MZI_White_Label_Pro_About {
 
                 <!-- Right Column: System Environment -->
                 <div>
-                    <div class="mzi-wlp-card">
+                    <div class="mikrotek-wpt-card" style="background:#fff;border:1px solid #ccd0d4;padding:20px;border-radius:8px;">
                         <h2>Informasi Sistem Server</h2>
                         <p class="description" style="margin-bottom:12px;">Ringkasan lingkungan runtime WordPress & PHP.</p>
 
@@ -144,4 +131,9 @@ class MZI_White_Label_Pro_About {
         </div>
         <?php
     }
+}
+
+// Class alias for backward compatibility
+if (!class_exists('MZI_White_Label_Pro_About')) {
+    class_alias('Mikrotek_WP_Toolkit_About', 'MZI_White_Label_Pro_About');
 }

@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class MZI_White_Label_Pro_Changelog {
+class Mikrotek_WP_Toolkit_Changelog {
 
     public static function get_all() {
         return self::entries();
@@ -13,14 +13,19 @@ class MZI_White_Label_Pro_Changelog {
     public static function entries() {
         return [
             '4.0.0' => [
+                'Rebranding' => [
+                    'Resmi berganti nama dari MZI White Label Pro menjadi Mikrotek WP Toolkit.',
+                ],
                 'Added' => [
-                    'Sistem arsitektur modular baru untuk performa dan kemudahan maintenance.',
+                    'Sistem arsitektur modular v4 baru untuk performa dan kemudahan maintenance.',
                     'Standalone Redirection Manager (301 Permanent, 302/307 Temporary) dengan hit counter.',
                     'Database URL Migration Tool (Search & Replace) dengan dukungan Safe Serialized Handler dan Regular Expression (Regex).',
                     'Lightweight Broken Link Checker (on-demand scan tanpa beban background server).',
                     'Custom Login URL Changer (/masuk, /rahasia) dan blokir direct access /wp-login.php & /wp-admin ke 404 Not Found.',
-                    'Username Enumeration Protection (Obscure Login Errors).',
+                    'Username Enumeration Protection (Obscure Login Errors & REST API /wp/v2/users blocking).',
                     'Audit Trail Log Manager dengan mandatory enable toggle, Search & Filter, Table Sorting, dan Export to CSV.',
+                    'Kumpulan Utility Shortcodes ([mikrotek_year], [wpt_year], [mzi_year], [mzi_countdown], dll) beserta dashboard dokumentasi & live preview.',
+                    'Maintenance Mode / Coming Soon dengan kustomisasi logo, pesan, warna background, dan status HTTP 503/200.',
                     'Sub-menu About Info yang menampilkan versi terpasang, ringkasan sistem server, dan riwayat changelog.',
                 ],
                 'Security' => [
@@ -55,15 +60,12 @@ class MZI_White_Label_Pro_Changelog {
                     'Compatibility guard for Wordfence.',
                     'Separate admin, login, and dark admin assets.',
                 ],
-                'Changed' => [
-                    'Main plugin file is now a lightweight bootstrap.',
-                    'Settings UI now uses a field registry.',
-                    'Existing mzi_white_label_settings option is preserved for upgrade compatibility.',
-                ],
-                'Compatibility' => [
-                    'Wordfence admin pages, translated text, protected menu slugs, and heartbeat behavior are protected by default.',
-                ],
             ],
         ];
     }
+}
+
+// Class alias for backward compatibility
+if (!class_exists('MZI_White_Label_Pro_Changelog')) {
+    class_alias('Mikrotek_WP_Toolkit_Changelog', 'MZI_White_Label_Pro_Changelog');
 }

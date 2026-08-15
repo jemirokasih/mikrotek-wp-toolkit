@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class MZI_White_Label_Pro_Advanced {
+class Mikrotek_WP_Toolkit_Advanced {
 
     public function __construct() {
         add_filter('xmlrpc_enabled', [$this, 'xmlrpc_control']);
@@ -17,7 +17,7 @@ class MZI_White_Label_Pro_Advanced {
     }
 
     public function xmlrpc_control($enabled) {
-        if (!empty(MZI_White_Label_Pro_Settings::get('disable_xmlrpc'))) {
+        if (!empty(Mikrotek_WP_Toolkit_Settings::get('disable_xmlrpc'))) {
             return false;
         }
 
@@ -25,7 +25,7 @@ class MZI_White_Label_Pro_Advanced {
     }
 
     public function gutenberg_control($enabled) {
-        if (!empty(MZI_White_Label_Pro_Settings::get('disable_gutenberg'))) {
+        if (!empty(Mikrotek_WP_Toolkit_Settings::get('disable_gutenberg'))) {
             return false;
         }
 
@@ -33,7 +33,7 @@ class MZI_White_Label_Pro_Advanced {
     }
 
     public function comments_control() {
-        if (empty(MZI_White_Label_Pro_Settings::get('disable_comments'))) {
+        if (empty(Mikrotek_WP_Toolkit_Settings::get('disable_comments'))) {
             return;
         }
 
@@ -42,11 +42,11 @@ class MZI_White_Label_Pro_Advanced {
     }
 
     public function heartbeat_control() {
-        if (empty(MZI_White_Label_Pro_Settings::get('disable_heartbeat'))) {
+        if (empty(Mikrotek_WP_Toolkit_Settings::get('disable_heartbeat'))) {
             return;
         }
 
-        if (MZI_White_Label_Pro_Compatibility::is_wordfence_context()) {
+        if (Mikrotek_WP_Toolkit_Compatibility::is_wordfence_context()) {
             return;
         }
 
@@ -58,11 +58,11 @@ class MZI_White_Label_Pro_Advanced {
             return $result;
         }
 
-        if (MZI_White_Label_Pro_Settings::enabled('disable_rest_api')) {
+        if (Mikrotek_WP_Toolkit_Settings::enabled('disable_rest_api')) {
             if (!is_user_logged_in()) {
                 return new WP_Error(
                     'rest_login_required',
-                    __('REST API access is restricted to authenticated users.', 'mzi-white-label-pro'),
+                    __('REST API access is restricted to authenticated users.', 'mikrotek-wp-toolkit'),
                     ['status' => rest_authorization_required_code()]
                 );
             }
@@ -72,7 +72,7 @@ class MZI_White_Label_Pro_Advanced {
     }
 
     public function rest_api_endpoints_control($endpoints) {
-        if (MZI_White_Label_Pro_Settings::enabled('disable_rest_users')) {
+        if (Mikrotek_WP_Toolkit_Settings::enabled('disable_rest_users')) {
             if (!is_user_logged_in() || !current_user_can('list_users')) {
                 if (isset($endpoints['/wp/v2/users'])) {
                     unset($endpoints['/wp/v2/users']);
@@ -85,4 +85,9 @@ class MZI_White_Label_Pro_Advanced {
 
         return $endpoints;
     }
+}
+
+// Class alias for backward compatibility
+if (!class_exists('MZI_White_Label_Pro_Advanced')) {
+    class_alias('Mikrotek_WP_Toolkit_Advanced', 'MZI_White_Label_Pro_Advanced');
 }

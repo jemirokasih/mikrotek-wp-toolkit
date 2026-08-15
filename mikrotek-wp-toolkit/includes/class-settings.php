@@ -4,16 +4,27 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class MZI_White_Label_Pro_Settings {
+class Mikrotek_WP_Toolkit_Settings {
 
-    const OPTION_NAME = 'mzi_white_label_settings';
+    const OPTION_NAME = 'mikrotek_wp_toolkit_settings';
+    const OLD_OPTION_NAME = 'mzi_white_label_settings';
 
     public static function option_name() {
         return self::OPTION_NAME;
     }
 
     public static function all() {
-        $settings = get_option(self::OPTION_NAME, []);
+        $settings = get_option(self::OPTION_NAME, null);
+
+        if (null === $settings || false === $settings) {
+            // Backward compatibility fallback to old option
+            $old_settings = get_option(self::OLD_OPTION_NAME, []);
+            if (!empty($old_settings) && is_array($old_settings)) {
+                update_option(self::OPTION_NAME, $old_settings);
+                return $old_settings;
+            }
+            $settings = [];
+        }
 
         return is_array($settings) ? $settings : [];
     }
@@ -204,4 +215,9 @@ class MZI_White_Label_Pro_Settings {
 
         return array_values($posted_fields);
     }
+}
+
+// Class alias for backward compatibility
+if (!class_exists('MZI_White_Label_Pro_Settings')) {
+    class_alias('Mikrotek_WP_Toolkit_Settings', 'MZI_White_Label_Pro_Settings');
 }

@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class MZI_White_Label_Pro_Email {
+class Mikrotek_WP_Toolkit_Email {
 
     public function __construct() {
         add_filter('wp_mail_from_name', [$this, 'custom_mail_name']);
@@ -13,25 +13,25 @@ class MZI_White_Label_Pro_Email {
     }
 
     public function custom_mail_name() {
-        return MZI_White_Label_Pro_Settings::get('mail_name', get_bloginfo('name'));
+        return Mikrotek_WP_Toolkit_Settings::get('mail_name', get_bloginfo('name'));
     }
 
     public function custom_mail_email() {
-        return MZI_White_Label_Pro_Settings::get('mail_email', get_option('admin_email'));
+        return Mikrotek_WP_Toolkit_Settings::get('mail_email', get_option('admin_email'));
     }
 
     public function configure_smtp($phpmailer) {
-        $mail_method = MZI_White_Label_Pro_Settings::get('mail_method', 'default');
+        $mail_method = Mikrotek_WP_Toolkit_Settings::get('mail_method', 'default');
         if ('smtp' !== $mail_method) {
             return;
         }
 
-        $host       = MZI_White_Label_Pro_Settings::get('smtp_host');
-        $port       = absint(MZI_White_Label_Pro_Settings::get('smtp_port', 587));
-        $encryption = MZI_White_Label_Pro_Settings::get('smtp_encryption', 'tls');
-        $auth       = MZI_White_Label_Pro_Settings::enabled('smtp_auth', true);
-        $username   = MZI_White_Label_Pro_Settings::get('smtp_username');
-        $password   = MZI_White_Label_Pro_Settings::get('smtp_password');
+        $host       = Mikrotek_WP_Toolkit_Settings::get('smtp_host');
+        $port       = absint(Mikrotek_WP_Toolkit_Settings::get('smtp_port', 587));
+        $encryption = Mikrotek_WP_Toolkit_Settings::get('smtp_encryption', 'tls');
+        $auth       = Mikrotek_WP_Toolkit_Settings::enabled('smtp_auth', true);
+        $username   = Mikrotek_WP_Toolkit_Settings::get('smtp_username');
+        $password   = Mikrotek_WP_Toolkit_Settings::get('smtp_password');
 
         if (empty($host)) {
             return;
@@ -55,4 +55,9 @@ class MZI_White_Label_Pro_Email {
             $phpmailer->SMTPSecure = '';
         }
     }
+}
+
+// Class alias for backward compatibility
+if (!class_exists('MZI_White_Label_Pro_Email')) {
+    class_alias('Mikrotek_WP_Toolkit_Email', 'MZI_White_Label_Pro_Email');
 }

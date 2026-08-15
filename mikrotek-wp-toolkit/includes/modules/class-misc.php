@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class MZI_White_Label_Pro_Misc {
+class Mikrotek_WP_Toolkit_Misc {
 
     public function __construct() {
         add_action('admin_init', [$this, 'init_misc_features']);
@@ -18,17 +18,17 @@ class MZI_White_Label_Pro_Misc {
     }
 
     public function init_misc_features() {
-        if (MZI_White_Label_Pro_Settings::enabled('hide_plugin_update_notices')) {
+        if (Mikrotek_WP_Toolkit_Settings::enabled('hide_plugin_update_notices')) {
             remove_action('load-plugins.php', 'wp_update_plugins');
             add_filter('pre_site_transient_update_plugins', '__return_null');
         }
 
-        if (MZI_White_Label_Pro_Settings::enabled('hide_theme_update_notices')) {
+        if (Mikrotek_WP_Toolkit_Settings::enabled('hide_theme_update_notices')) {
             remove_action('load-themes.php', 'wp_update_themes');
             add_filter('pre_site_transient_update_themes', '__return_null');
         }
 
-        if (MZI_White_Label_Pro_Settings::enabled('hide_core_update_notices')) {
+        if (Mikrotek_WP_Toolkit_Settings::enabled('hide_core_update_notices')) {
             add_filter('pre_site_transient_update_core', '__return_null');
             remove_action('admin_notices', 'update_nag', 3);
             remove_action('network_admin_notices', 'update_nag', 3);
@@ -38,37 +38,37 @@ class MZI_White_Label_Pro_Misc {
     public function inject_misc_styles() {
         $css = '';
 
-        if (MZI_White_Label_Pro_Settings::enabled('hide_plugin_update_notices')) {
+        if (Mikrotek_WP_Toolkit_Settings::enabled('hide_plugin_update_notices')) {
             $css .= '.plugin-update-tr, .plugins .update-message, .notice.update-message, span.update-plugins, .plugin-count { display: none !important; }';
         }
 
-        if (MZI_White_Label_Pro_Settings::enabled('hide_theme_update_notices')) {
+        if (Mikrotek_WP_Toolkit_Settings::enabled('hide_theme_update_notices')) {
             $css .= '.theme-update-message, .theme-count, span.update-themes { display: none !important; }';
         }
 
-        if (MZI_White_Label_Pro_Settings::enabled('hide_core_update_notices')) {
+        if (Mikrotek_WP_Toolkit_Settings::enabled('hide_core_update_notices')) {
             $css .= '.update-nag, #wp-admin-bar-updates, .update-core-count { display: none !important; }';
         }
 
-        $custom_admin_css = MZI_White_Label_Pro_Settings::get('custom_admin_css');
+        $custom_admin_css = Mikrotek_WP_Toolkit_Settings::get('custom_admin_css');
         if (!empty($custom_admin_css)) {
             $css .= "\n" . $custom_admin_css;
         }
 
         if (!empty($css)) {
-            echo '<style id="mzi-wlp-misc-css">' . esc_html($css) . '</style>';
+            echo '<style id="mikrotek-wpt-misc-css">' . esc_html($css) . '</style>';
         }
     }
 
     public function inject_custom_js() {
-        $custom_admin_js = MZI_White_Label_Pro_Settings::get('custom_admin_js');
+        $custom_admin_js = Mikrotek_WP_Toolkit_Settings::get('custom_admin_js');
         if (!empty($custom_admin_js)) {
-            echo '<script id="mzi-wlp-custom-admin-js">' . esc_html($custom_admin_js) . '</script>';
+            echo '<script id="mikrotek-wpt-custom-admin-js">' . esc_html($custom_admin_js) . '</script>';
         }
     }
 
     public function remove_help_tabs() {
-        if (MZI_White_Label_Pro_Settings::enabled('disable_help_tab')) {
+        if (Mikrotek_WP_Toolkit_Settings::enabled('disable_help_tab')) {
             $screen = get_current_screen();
             if ($screen && method_exists($screen, 'remove_help_tabs')) {
                 $screen->remove_help_tabs();
@@ -77,7 +77,7 @@ class MZI_White_Label_Pro_Misc {
     }
 
     public function toggle_screen_options($show) {
-        if (MZI_White_Label_Pro_Settings::enabled('disable_screen_options')) {
+        if (Mikrotek_WP_Toolkit_Settings::enabled('disable_screen_options')) {
             return false;
         }
 
@@ -89,7 +89,7 @@ class MZI_White_Label_Pro_Misc {
             return true;
         }
 
-        $default_image = MZI_White_Label_Pro_Settings::get('default_featured_image');
+        $default_image = Mikrotek_WP_Toolkit_Settings::get('default_featured_image');
 
         return !empty($default_image);
     }
@@ -99,7 +99,7 @@ class MZI_White_Label_Pro_Misc {
             return $html;
         }
 
-        $default_image = MZI_White_Label_Pro_Settings::get('default_featured_image');
+        $default_image = Mikrotek_WP_Toolkit_Settings::get('default_featured_image');
         if (empty($default_image)) {
             return $html;
         }
@@ -120,6 +120,11 @@ class MZI_White_Label_Pro_Misc {
             }
         }
 
-        return '<img src="' . esc_url($default_image) . '" class="attachment-default wp-post-image mzi-default-featured-image"' . $attr_str . ' alt="">';
+        return '<img src="' . esc_url($default_image) . '" class="attachment-default wp-post-image mikrotek-default-featured-image"' . $attr_str . ' alt="">';
     }
+}
+
+// Class alias for backward compatibility
+if (!class_exists('MZI_White_Label_Pro_Misc')) {
+    class_alias('Mikrotek_WP_Toolkit_Misc', 'MZI_White_Label_Pro_Misc');
 }

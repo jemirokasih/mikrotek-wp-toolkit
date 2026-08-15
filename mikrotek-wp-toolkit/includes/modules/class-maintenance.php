@@ -4,14 +4,14 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class MZI_White_Label_Pro_Maintenance {
+class Mikrotek_WP_Toolkit_Maintenance {
 
     public function __construct() {
         add_action('template_redirect', [$this, 'handle_maintenance_mode']);
     }
 
     public function handle_maintenance_mode() {
-        if (!MZI_White_Label_Pro_Settings::enabled('enable_maintenance_mode')) {
+        if (!Mikrotek_WP_Toolkit_Settings::enabled('enable_maintenance_mode')) {
             return;
         }
 
@@ -25,12 +25,12 @@ class MZI_White_Label_Pro_Maintenance {
             return;
         }
 
-        $mode     = MZI_White_Label_Pro_Settings::get('maintenance_mode_type', '503');
-        $title    = MZI_White_Label_Pro_Settings::get('maintenance_title', 'Under Maintenance');
-        $headline = MZI_White_Label_Pro_Settings::get('maintenance_headline', 'Kami Akan Segera Kembali!');
-        $message  = MZI_White_Label_Pro_Settings::get('maintenance_message', 'Situs web kami saat ini sedang dalam pemeliharaan rutin. Silakan kembali beberapa saat lagi.');
-        $logo     = MZI_White_Label_Pro_Settings::get('maintenance_logo', MZI_White_Label_Pro_Settings::get('login_logo'));
-        $bg_color = MZI_White_Label_Pro_Settings::get('maintenance_bg_color', '#0f172a');
+        $mode     = Mikrotek_WP_Toolkit_Settings::get('maintenance_mode_type', '503');
+        $title    = Mikrotek_WP_Toolkit_Settings::get('maintenance_title', 'Under Maintenance');
+        $headline = Mikrotek_WP_Toolkit_Settings::get('maintenance_headline', 'Kami Akan Segera Kembali!');
+        $message  = Mikrotek_WP_Toolkit_Settings::get('maintenance_message', 'Situs web kami saat ini sedang dalam pemeliharaan rutin. Silakan kembali beberapa saat lagi.');
+        $logo     = Mikrotek_WP_Toolkit_Settings::get('maintenance_logo', Mikrotek_WP_Toolkit_Settings::get('login_logo'));
+        $bg_color = Mikrotek_WP_Toolkit_Settings::get('maintenance_bg_color', '#0f172a');
 
         if ('503' === $mode) {
             header('HTTP/1.1 503 Service Temporarily Unavailable');
@@ -58,7 +58,7 @@ class MZI_White_Label_Pro_Maintenance {
                     padding: 20px;
                     text-align: center;
                 }
-                .mzi-maintenance-card {
+                .mikrotek-maintenance-card {
                     background: rgba(30, 41, 59, 0.85);
                     backdrop-filter: blur(12px);
                     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -68,7 +68,7 @@ class MZI_White_Label_Pro_Maintenance {
                     width: 100%;
                     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
                 }
-                .mzi-maintenance-logo {
+                .mikrotek-maintenance-logo {
                     max-width: 180px;
                     max-height: 90px;
                     margin-bottom: 24px;
@@ -101,9 +101,9 @@ class MZI_White_Label_Pro_Maintenance {
             </style>
         </head>
         <body>
-            <div class="mzi-maintenance-card">
+            <div class="mikrotek-maintenance-card">
                 <?php if (!empty($logo)) : ?>
-                    <img src="<?php echo esc_url($logo); ?>" alt="Logo" class="mzi-maintenance-logo">
+                    <img src="<?php echo esc_url($logo); ?>" alt="Logo" class="mikrotek-maintenance-logo">
                 <?php endif; ?>
                 <div>
                     <span class="badge"><?php echo esc_html($title); ?></span>
@@ -116,4 +116,9 @@ class MZI_White_Label_Pro_Maintenance {
         <?php
         exit;
     }
+}
+
+// Class alias for backward compatibility
+if (!class_exists('MZI_White_Label_Pro_Maintenance')) {
+    class_alias('Mikrotek_WP_Toolkit_Maintenance', 'MZI_White_Label_Pro_Maintenance');
 }

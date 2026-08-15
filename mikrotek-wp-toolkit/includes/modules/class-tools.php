@@ -4,36 +4,33 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class MZI_White_Label_Pro_Tools {
+class Mikrotek_WP_Toolkit_Tools {
 
     public static function render_tools_page() {
         if (!current_user_can('manage_options')) {
-            wp_die(__('You do not have sufficient permissions to access this page.', 'mzi-white-label-pro'));
+            wp_die(__('You do not have sufficient permissions to access this page.', 'mikrotek-wp-toolkit'));
         }
 
-        // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-        $active_tool = isset($_GET['tool']) ? sanitize_key(wp_unslash($_GET['tool'])) : 'migration';
+        $active_tab = isset($_GET['tab']) ? sanitize_key($_GET['tab']) : 'migration';
 
         ?>
-        <div class="wrap mzi-wlp-wrap">
-            <h1>MZI Tools & Utilities</h1>
+        <div class="wrap mikrotek-wpt-wrap">
+            <h1>Mikrotek Toolkit Utilities</h1>
             <p class="description">
-                Perkakas pembantu untuk pengelolaan migrasi URL database dan pemindaian broken link secara ringan & cepat.
+                Perkakas serbaguna untuk migrasi basis data, pencarian & penggantian URL, serta pemindaian link rusak.
             </p>
 
-            <nav class="nav-tab-wrapper" style="margin-top: 16px;">
-                <a href="<?php echo esc_url(admin_url('admin.php?page=mzi-white-label-tools&tool=migration')); ?>"
-                   class="nav-tab <?php echo 'migration' === $active_tool ? 'nav-tab-active' : ''; ?>">
+            <nav class="nav-tab-wrapper" style="margin-top:15px;">
+                <a href="<?php echo esc_url(admin_url('admin.php?page=mikrotek-wp-toolkit-tools&tab=migration')); ?>" class="nav-tab <?php echo 'migration' === $active_tab ? 'nav-tab-active' : ''; ?>">
                     URL Migration Tool (Search & Replace)
                 </a>
-                <a href="<?php echo esc_url(admin_url('admin.php?page=mzi-white-label-tools&tool=link-checker')); ?>"
-                   class="nav-tab <?php echo 'link-checker' === $active_tool ? 'nav-tab-active' : ''; ?>">
-                    Broken Link Checker (Ringan)
+                <a href="<?php echo esc_url(admin_url('admin.php?page=mikrotek-wp-toolkit-tools&tab=link_checker')); ?>" class="nav-tab <?php echo 'link_checker' === $active_tab ? 'nav-tab-active' : ''; ?>">
+                    Broken Link Checker
                 </a>
             </nav>
 
             <?php
-            if ('link-checker' === $active_tool) {
+            if ('link_checker' === $active_tab) {
                 self::render_link_checker_tool();
             } else {
                 self::render_migration_tool();
@@ -44,109 +41,103 @@ class MZI_White_Label_Pro_Tools {
     }
 
     private static function render_migration_tool() {
-        $results = null;
-        $old_url = '';
-        $new_url = '';
-        $dry_run = false;
+        $search = '';
+        $replace = '';
+        $dry_run = true;
         $use_regex = false;
+        $results = null;
 
-        if (isset($_POST['mzi_wlp_action']) && 'replace_urls' === $_POST['mzi_wlp_action']) {
-            check_admin_referer('mzi_wlp_url_replace_action', 'mzi_wlp_nonce');
+        if (isset($_POST['mikrotek_wpt_action']) && 'url_replace' === $_POST['mikrotek_wpt_action']) {
+            check_admin_referer('mikrotek_wpt_url_replace_action', 'mikrotek_wpt_nonce');
 
-            $old_url   = isset($_POST['old_url']) ? trim(wp_unslash($_POST['old_url'])) : '';
-            $new_url   = isset($_POST['new_url']) ? trim(wp_unslash($_POST['new_url'])) : '';
-            $dry_run   = isset($_POST['dry_run']) && '1' === $_POST['dry_run'];
-            $use_regex = isset($_POST['use_regex']) && '1' === $_POST['use_regex'];
+            $search    = isset($_POST['search_string']) ? wp_unslash($_POST['search_string']) : '';
+            $replace   = isset($_POST['replace_string']) ? wp_unslash($_POST['replace_string']) : '';
+            $dry_run   = !isset($_POST['execute_real']);
+            $use_regex = isset($_POST['use_regex']);
 
-            if (!empty($old_url)) {
-                $results = self::process_search_replace($old_url, $new_url, $dry_run, $use_regex);
+            if (!empty($search)) {
+                $results = self::process_search_replace($search, $replace, $dry_run, $use_regex);
             }
         }
 
         ?>
-        <div class="notice notice-warning" style="margin-top: 15px; border-left-color: #f0b849;">
-            <p>
-                <strong>PERHATIAN:</strong> Sangat disarankan untuk membuat <strong>Backup Database</strong> terlebih dahulu sebelum melakukan eksekusi penggantian URL secara langsung.
+        <div class="mikrotek-wpt-card" style="background:#fff;border:1px solid #ccd0d4;padding:20px;border-radius:8px;margin-top: 20px;">
+            <h2>URL Migration & Database Search Replace</h2>
+            <p class="description">
+                Perbarui URL lama ke URL baru di seluruh tabel basis data WordPress (termasuk data ter-serialisasi / serialized arrays) secara aman.
             </p>
-        </div>
 
-        <?php if (null !== $results) : ?>
-            <div class="notice notice-info is-dismissible" style="margin-top: 15px;">
-                <p>
-                    <strong>Hasil <?php echo $dry_run ? 'Dry Run (Simulasi)' : 'Migrasi URL'; ?>:</strong>
-                    Ditemukan <strong><?php echo esc_html($results['total_updates']); ?></strong> perubahan dari total <strong><?php echo esc_html($results['tables_scanned']); ?></strong> tabel yang dipindai <?php echo $use_regex ? '(Menggunakan Mode Regex)' : ''; ?>.
-                </p>
-            </div>
-        <?php endif; ?>
-
-        <div class="mzi-wlp-card" style="margin-top: 20px;">
             <form method="post" action="">
-                <?php wp_nonce_field('mzi_wlp_url_replace_action', 'mzi_wlp_nonce'); ?>
-                <input type="hidden" name="mzi_wlp_action" value="replace_urls">
+                <?php wp_nonce_field('mikrotek_wpt_url_replace_action', 'mikrotek_wpt_nonce'); ?>
+                <input type="hidden" name="mikrotek_wpt_action" value="url_replace">
 
-                <table class="form-table mzi-wlp-form-table">
+                <table class="form-table mikrotek-wpt-form-table">
                     <tr>
-                        <th scope="row"><label for="old_url">Old URL / Text / Pattern</label></th>
+                        <th scope="row"><label for="search_string">String / URL Lama (Search)</label></th>
                         <td>
-                            <input type="text" id="old_url" name="old_url" class="large-text" required
-                                   placeholder="http://old-domain.com"
-                                   value="<?php echo esc_attr($old_url); ?>">
-                            <p class="description">Masukkan URL/domain lama yang ingin diganti, atau pola Regex jika mode Regex diaktifkan.</p>
+                            <input type="text" id="search_string" name="search_string" value="<?php echo esc_attr($search); ?>" class="regular-text" placeholder="http://domain-lama.com" required>
+                            <p class="description">Masukkan string atau URL lama yang ingin diganti di seluruh basis data.</p>
                         </td>
                     </tr>
                     <tr>
-                        <th scope="row"><label for="new_url">New URL / Text</label></th>
+                        <th scope="row"><label for="replace_string">String / URL Baru (Replace)</label></th>
                         <td>
-                            <input type="text" id="new_url" name="new_url" class="large-text"
-                                   placeholder="https://new-domain.com"
-                                   value="<?php echo esc_attr($new_url); ?>">
-                            <p class="description">Masukkan URL atau teks baru pengganti.</p>
+                            <input type="text" id="replace_string" name="replace_string" value="<?php echo esc_attr($replace); ?>" class="regular-text" placeholder="https://domain-baru.com">
+                            <p class="description">Masukkan string atau URL baru pengganti.</p>
                         </td>
                     </tr>
                     <tr>
-                        <th scope="row">Regular Expression</th>
+                        <th scope="row">Mode Pengujian (Dry Run)</th>
+                        <td>
+                            <label>
+                                <input type="checkbox" name="execute_real" value="1" <?php checked(!$dry_run); ?>>
+                                <strong>Jalankan Perubahan Nyata di Database (LIVE Execute)</strong>
+                            </label>
+                            <p class="description" style="color:#d97706;">
+                                Jika tidak dicentang, tool hanya akan melakukan pemindaian uji coba (Dry Run Simulation) tanpa mengubah data.
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Pencarian Regex</th>
                         <td>
                             <label>
                                 <input type="checkbox" name="use_regex" value="1" <?php checked($use_regex); ?>>
-                                <strong>Gunakan Regular Expression (Regex)</strong> — Aktifkan untuk pencarian menggunakan pencocokan pola regex (contoh: <code>/https?:\/\/(www\.)?old-domain\.com/i</code>).
-                            </label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Mode Dry Run</th>
-                        <td>
-                            <label>
-                                <input type="checkbox" name="dry_run" value="1" <?php checked($dry_run || null === $results); ?>>
-                                <strong>Simulasi (Dry Run)</strong> — Hanya hitung baris yang akan berubah tanpa mengubah isi database secara langsung.
+                                Gunakan Pencarian Regular Expression (Regex)
                             </label>
                         </td>
                     </tr>
                 </table>
 
-                <div class="mzi-wlp-submit-row">
+                <div class="mikrotek-wpt-submit-row">
                     <button type="submit" class="button button-primary">
-                        <?php echo ($dry_run || null === $results) ? 'Jalankan Simulasi (Dry Run)' : 'Proses Penggantian URL Database'; ?>
+                        <?php echo $dry_run ? 'Jalankan Simulasi (Dry Run)' : 'Jalankan Proses Penggantian Database'; ?>
                     </button>
                 </div>
             </form>
         </div>
 
-        <?php if (null !== $results && !empty($results['details'])) : ?>
-            <div class="mzi-wlp-card" style="margin-top: 20px;">
-                <h2>Detail Tabel yang Diproses</h2>
-                <table class="widefat striped" style="margin-top: 10px;">
+        <?php if (null !== $results) : ?>
+            <div class="mikrotek-wpt-card" style="background:#fff;border:1px solid #ccd0d4;padding:20px;border-radius:8px;margin-top: 20px;">
+                <h2>Hasil Laporan Search & Replace</h2>
+                <div class="notice notice-<?php echo $dry_run ? 'info' : 'success'; ?>" style="margin-top: 10px;">
+                    <p>
+                        Mode: <strong><?php echo $dry_run ? 'Simulasi Dry Run (Data Tidak Diubah)' : 'LIVE Execution (Data Diperbarui)'; ?></strong>
+                        | Total Perubahan: <strong><?php echo esc_html($results['total_updates']); ?></strong> data diperbarui dari <strong><?php echo esc_html($results['tables_scanned']); ?></strong> tabel.
+                    </p>
+                </div>
+
+                <table class="widefat striped" style="margin-top: 15px;">
                     <thead>
                         <tr>
                             <th>Nama Tabel</th>
-                            <th>Kolom</th>
-                            <th>Baris Terpengaruh</th>
+                            <th>Jumlah Data Ditemukan/Diubah</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($results['details'] as $detail) : ?>
+                        <?php foreach ($results['details'] as $table_name => $detail) : ?>
                             <tr>
-                                <td><code><?php echo esc_html($detail['table']); ?></code></td>
-                                <td><code><?php echo esc_html($detail['column']); ?></code></td>
+                                <td><code><?php echo esc_html($table_name); ?></code></td>
                                 <td><strong><?php echo esc_html($detail['count']); ?></strong> baris</td>
                             </tr>
                         <?php endforeach; ?>
@@ -161,8 +152,8 @@ class MZI_White_Label_Pro_Tools {
         $scan_results = null;
         $scan_limit = 30;
 
-        if (isset($_POST['mzi_wlp_action']) && 'scan_links' === $_POST['mzi_wlp_action']) {
-            check_admin_referer('mzi_wlp_link_checker_action', 'mzi_wlp_nonce');
+        if (isset($_POST['mikrotek_wpt_action']) && 'scan_links' === $_POST['mikrotek_wpt_action']) {
+            check_admin_referer('mikrotek_wpt_link_checker_action', 'mikrotek_wpt_nonce');
 
             $scan_limit = isset($_POST['scan_limit']) ? absint($_POST['scan_limit']) : 30;
             $post_types = isset($_POST['post_types']) && is_array($_POST['post_types']) ? array_map('sanitize_key', $_POST['post_types']) : ['post', 'page'];
@@ -171,17 +162,17 @@ class MZI_White_Label_Pro_Tools {
         }
 
         ?>
-        <div class="mzi-wlp-card" style="margin-top: 20px;">
+        <div class="mikrotek-wpt-card" style="background:#fff;border:1px solid #ccd0d4;padding:20px;border-radius:8px;margin-top: 20px;">
             <h2>Lightweight Broken Link Checker</h2>
             <p class="description">
                 Pindai link rusak (404 Not Found, Timeout, Server Error) di dalam konten pos/halaman secara instan tanpa memberatkan server background.
             </p>
 
             <form method="post" action="">
-                <?php wp_nonce_field('mzi_wlp_link_checker_action', 'mzi_wlp_nonce'); ?>
-                <input type="hidden" name="mzi_wlp_action" value="scan_links">
+                <?php wp_nonce_field('mikrotek_wpt_link_checker_action', 'mikrotek_wpt_nonce'); ?>
+                <input type="hidden" name="mikrotek_wpt_action" value="scan_links">
 
-                <table class="form-table mzi-wlp-form-table">
+                <table class="form-table mikrotek-wpt-form-table">
                     <tr>
                         <th scope="row">Tipe Konten</th>
                         <td>
@@ -206,7 +197,7 @@ class MZI_White_Label_Pro_Tools {
                     </tr>
                 </table>
 
-                <div class="mzi-wlp-submit-row">
+                <div class="mikrotek-wpt-submit-row">
                     <button type="submit" class="button button-primary">
                         <span class="dashicons dashicons-search" style="vertical-align:middle;margin-right:3px;"></span> Mulai Pindai Broken Links
                     </button>
@@ -215,7 +206,7 @@ class MZI_White_Label_Pro_Tools {
         </div>
 
         <?php if (null !== $scan_results) : ?>
-            <div class="mzi-wlp-card" style="margin-top: 20px;">
+            <div class="mikrotek-wpt-card" style="background:#fff;border:1px solid #ccd0d4;padding:20px;border-radius:8px;margin-top: 20px;">
                 <h2>Hasil Pemindaian Link</h2>
                 <p>
                     Berhasil memindai <strong><?php echo esc_html($scan_results['scanned_posts']); ?></strong> konten dan <strong><?php echo esc_html($scan_results['scanned_links']); ?></strong> total link.
@@ -249,13 +240,13 @@ class MZI_White_Label_Pro_Tools {
                                         </a>
                                     </td>
                                     <td>
-                                        <span class="badge" style="background:#fee2e2;color:#991b1b;padding:4px 8px;border-radius:4px;font-weight:600;font-size:12px;">
+                                        <span class="badge" style="background:#fee2e2;color:#b91c1c;padding:3px 8px;border-radius:4px;font-weight:600;font-size:11px;">
                                             <?php echo esc_html($item['status_text']); ?>
                                         </span>
                                     </td>
                                     <td>
-                                        <a href="<?php echo esc_url(get_edit_post_link($item['post_id'])); ?>" class="button button-small" target="_blank">
-                                            Edit Konten
+                                        <a href="<?php echo esc_url(get_edit_post_link($item['post_id'])); ?>" target="_blank" class="button button-small">
+                                            Sunting Konten
                                         </a>
                                     </td>
                                 </tr>
@@ -268,7 +259,7 @@ class MZI_White_Label_Pro_Tools {
         <?php
     }
 
-    private static function scan_broken_links($post_types = ['post', 'page'], $limit = 30) {
+    private static function scan_broken_links($post_types, $limit) {
         global $wpdb;
 
         $post_types_placeholder = implode("','", array_map('esc_sql', $post_types));
@@ -283,8 +274,8 @@ class MZI_White_Label_Pro_Tools {
                   ORDER BY ID DESC LIMIT {$limit}";
 
         $posts = $wpdb->get_results($query);
-        $broken_links = [];
         $scanned_links_count = 0;
+        $broken_links = [];
 
         if (empty($posts)) {
             return [
@@ -294,30 +285,21 @@ class MZI_White_Label_Pro_Tools {
             ];
         }
 
-        $url_cache = [];
-
         foreach ($posts as $post) {
-            preg_match_all('/<a\s+[^>]*href=["\']([^"\']+)["\']/i', $post->post_content, $matches);
-            if (empty($matches[1])) {
+            preg_match_all('/<a\s+(?:[^>]*?\s+)?href=(["\'])(.*?)\1/i', $post->post_content, $matches);
+            if (empty($matches[2])) {
                 continue;
             }
 
-            $urls = array_unique($matches[1]);
+            $urls = array_unique($matches[2]);
             foreach ($urls as $url) {
                 $url = trim($url);
-
-                if (empty($url) || '#' === $url[0] || 0 === strpos($url, 'mailto:') || 0 === strpos($url, 'tel:') || 0 === strpos($url, 'javascript:')) {
+                if (empty($url) || 0 === strpos($url, '#') || 0 === strpos($url, 'mailto:') || 0 === strpos($url, 'tel:') || 0 === strpos($url, 'javascript:')) {
                     continue;
                 }
 
                 $scanned_links_count++;
-
-                if (!isset($url_cache[$url])) {
-                    $status_code = self::check_url_status($url);
-                    $url_cache[$url] = $status_code;
-                } else {
-                    $status_code = $url_cache[$url];
-                }
+                $status_code = self::check_url_status($url);
 
                 if ($status_code >= 400 || 0 === $status_code) {
                     $broken_links[] = [
@@ -347,14 +329,14 @@ class MZI_White_Label_Pro_Tools {
         $args = [
             'timeout'     => 4,
             'redirection' => 3,
-            'sslverify'   => false,
-            'user-agent'  => 'MZI-Broken-Link-Checker/1.0',
+            'sslverify'   => apply_filters('mikrotek_wpt_sslverify', true),
+            'user-agent'  => 'Mikrotek-Broken-Link-Checker/1.0',
         ];
 
-        $response = wp_remote_head($url, $args);
+        $response = wp_safe_remote_head($url, $args);
 
         if (is_wp_error($response) || wp_remote_retrieve_response_code($response) >= 400) {
-            $response = wp_remote_get($url, $args);
+            $response = wp_safe_remote_get($url, $args);
         }
 
         if (is_wp_error($response)) {
@@ -407,16 +389,18 @@ class MZI_White_Label_Pro_Tools {
                 continue;
             }
 
+            $table_updates = 0;
+
             foreach ($columns as $column) {
                 $col_name = $column['Field'];
-                $type = strtolower($column['Type']);
+                $col_type = strtolower($column['Type']);
 
-                if (strpos($type, 'char') === false && strpos($type, 'text') === false && strpos($type, 'blob') === false) {
+                if (false === strpos($col_type, 'char') && false === strpos($col_type, 'text')) {
                     continue;
                 }
 
                 if ($use_regex) {
-                    $clean_regex = trim($search, '/#~@');
+                    $clean_regex = self::clean_sql_regex($search);
                     $sql = $wpdb->prepare(
                         "SELECT `{$primary_key}`, `{$col_name}` FROM `{$table}` WHERE `{$col_name}` REGEXP %s",
                         $clean_regex
@@ -429,89 +413,95 @@ class MZI_White_Label_Pro_Tools {
                 }
 
                 $rows = $wpdb->get_results($sql, ARRAY_A);
+
                 if (empty($rows)) {
                     continue;
                 }
 
-                $changed_in_col = 0;
-
                 foreach ($rows as $row) {
-                    $pk_val = $row[$primary_key];
-                    $original_val = $row[$col_name];
-                    $new_val = self::recursive_unserialize_replace($search, $replace, $original_val, $use_regex, $regex_pattern);
+                    $id_val = $row[$primary_key];
+                    $data_val = $row[$col_name];
 
-                    if ($original_val !== $new_val) {
-                        $changed_in_col++;
+                    $replaced_val = self::recursive_unserialize_replace($search, $replace, $data_val, $use_regex, $regex_pattern);
+
+                    if ($replaced_val !== $data_val) {
+                        $table_updates++;
                         $total_updates++;
 
                         if (!$dry_run) {
                             $wpdb->update(
                                 $table,
-                                [$col_name => $new_val],
-                                [$primary_key => $pk_val]
+                                [$col_name => $replaced_val],
+                                [$primary_key => $id_val]
                             );
                         }
                     }
                 }
+            }
 
-                if ($changed_in_col > 0) {
-                    $details[] = [
-                        'table'  => $table,
-                        'column' => $col_name,
-                        'count'  => $changed_in_col,
-                    ];
-                }
+            if ($table_updates > 0) {
+                $details[$table] = [
+                    'count' => $table_updates,
+                ];
             }
         }
 
         return [
-            'total_updates'  => $total_updates,
             'tables_scanned' => $tables_scanned,
+            'total_updates'  => $total_updates,
             'details'        => $details,
         ];
     }
 
-    private static function format_regex_pattern($pattern) {
-        if (preg_match('/^([\/#~@]).*\1[a-z]*$/i', $pattern)) {
-            return $pattern;
+    private static function recursive_unserialize_replace($from, $to, $data, $use_regex = false, $regex_pattern = '') {
+        if (is_serialized($data)) {
+            $unserialized = @unserialize($data);
+            if (false !== $unserialized || 'b:0;' === $data) {
+                $replaced = self::recursive_unserialize_replace($from, $to, $unserialized, $use_regex, $regex_pattern);
+                return serialize($replaced);
+            }
         }
 
-        return '/' . str_replace('/', '\/', $pattern) . '/i';
-    }
-
-    private static function recursive_unserialize_replace($search, $replace, $data, $use_regex = false, $regex_pattern = '') {
-        if (is_string($data)) {
-            if (is_serialized($data)) {
-                $unserialized = @unserialize($data);
-                if (false !== $unserialized || 'b:0;' === $data) {
-                    $replaced = self::recursive_unserialize_replace($search, $replace, $unserialized, $use_regex, $regex_pattern);
-                    return serialize($replaced);
-                }
-            }
-
-            if ($use_regex) {
-                $pattern = !empty($regex_pattern) ? $regex_pattern : self::format_regex_pattern($search);
-                $res = @preg_replace($pattern, $replace, $data);
-                return null !== $res ? $res : $data;
-            }
-
-            return str_replace($search, $replace, $data);
-        } elseif (is_array($data)) {
+        if (is_array($data)) {
             $tmp = [];
             foreach ($data as $key => $value) {
-                $tmp_key = self::recursive_unserialize_replace($search, $replace, $key, $use_regex, $regex_pattern);
-                $tmp[$tmp_key] = self::recursive_unserialize_replace($search, $replace, $value, $use_regex, $regex_pattern);
+                $tmp[$key] = self::recursive_unserialize_replace($from, $to, $value, $use_regex, $regex_pattern);
             }
             return $tmp;
-        } elseif (is_object($data)) {
+        }
+
+        if (is_object($data)) {
             $tmp = clone $data;
-            foreach ($data as $key => $value) {
-                $tmp_key = self::recursive_unserialize_replace($search, $replace, $key, $use_regex, $regex_pattern);
-                $tmp->$tmp_key = self::recursive_unserialize_replace($search, $replace, $value, $use_regex, $regex_pattern);
+            foreach (get_object_vars($data) as $key => $value) {
+                $tmp->$key = self::recursive_unserialize_replace($from, $to, $value, $use_regex, $regex_pattern);
             }
             return $tmp;
+        }
+
+        if (is_string($data)) {
+            if ($use_regex && !empty($regex_pattern)) {
+                return @preg_replace($regex_pattern, $to, $data);
+            }
+            return str_replace($from, $to, $data);
         }
 
         return $data;
     }
+
+    private static function format_regex_pattern($pattern) {
+        if (0 === strpos($pattern, '/') && strlen($pattern) > 2 && '/' === substr($pattern, -1)) {
+            return $pattern;
+        }
+        return '/' . str_replace('/', '\/', $pattern) . '/i';
+    }
+
+    private static function clean_sql_regex($pattern) {
+        $pattern = trim($pattern, '/');
+        return $pattern;
+    }
+}
+
+// Class alias for backward compatibility
+if (!class_exists('MZI_White_Label_Pro_Tools')) {
+    class_alias('Mikrotek_WP_Toolkit_Tools', 'MZI_White_Label_Pro_Tools');
 }

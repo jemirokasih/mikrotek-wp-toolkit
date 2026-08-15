@@ -4,9 +4,10 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class MZI_White_Label_Pro_Audit {
+class Mikrotek_WP_Toolkit_Audit {
 
-    const OPTION_LOGS = 'mzi_white_label_audit_logs';
+    const OPTION_LOGS = 'mikrotek_wp_toolkit_audit_logs';
+    const OLD_OPTION_LOGS = 'mzi_white_label_audit_logs';
 
     public function __construct() {
         add_action('admin_init', [$this, 'handle_export_csv']);
@@ -24,7 +25,20 @@ class MZI_White_Label_Pro_Audit {
     }
 
     public static function is_enabled() {
-        return MZI_White_Label_Pro_Settings::enabled('enable_audit_trail');
+        return Mikrotek_WP_Toolkit_Settings::enabled('enable_audit_trail');
+    }
+
+    public static function get_logs() {
+        $logs = get_option(self::OPTION_LOGS, null);
+        if (null === $logs || false === $logs) {
+            $old_logs = get_option(self::OLD_OPTION_LOGS, []);
+            if (!empty($old_logs) && is_array($old_logs)) {
+                update_option(self::OPTION_LOGS, $old_logs);
+                return $old_logs;
+            }
+            $logs = [];
+        }
+        return is_array($logs) ? $logs : [];
     }
 
     public static function log_event($event, $details = '', $username = null) {
@@ -43,10 +57,7 @@ class MZI_White_Label_Pro_Audit {
 
         $ip = isset($_SERVER['REMOTE_ADDR']) ? sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR'])) : 'Unknown IP';
 
-        $logs = get_option(self::OPTION_LOGS, []);
-        if (!is_array($logs)) {
-            $logs = [];
-        }
+        $logs = self::get_logs();
 
         $new_entry = [
             'id'        => 'log_' . uniqid(),
@@ -68,7 +79,7 @@ class MZI_White_Label_Pro_Audit {
     }
 
     public function handle_export_csv() {
-        if (!isset($_GET['page']) || 'mzi-white-label-audit' !== $_GET['page']) {
+        if (!isset($_GET['page']) || !in_array($_GET['page'], ['mikrotek-wp-toolkit-audit', 'mzi-white-label-audit'], true)) {
             return;
         }
 
@@ -77,15 +88,12 @@ class MZI_White_Label_Pro_Audit {
         }
 
         if (!current_user_can('manage_options')) {
-            wp_die(__('You do not have sufficient permissions to access this page.', 'mzi-white-label-pro'));
+            wp_die(__('You do not have sufficient permissions to access this page.', 'mikrotek-wp-toolkit'));
         }
 
-        check_admin_referer('mzi_wlp_audit_export_action', 'mzi_wlp_nonce');
+        check_admin_referer('mikrotek_wpt_audit_export_action', 'mikrotek_wpt_nonce');
 
-        $logs = get_option(self::OPTION_LOGS, []);
-        if (!is_array($logs)) {
-            $logs = [];
-        }
+        $logs = self::get_logs();
 
         $search_query = isset($_GET['s']) ? trim(sanitize_text_field(wp_unslash($_GET['s']))) : '';
         if (!empty($search_query) && !empty($logs)) {
@@ -202,40 +210,37 @@ class MZI_White_Label_Pro_Audit {
 
     public static function render_audit_page() {
         if (!current_user_can('manage_options')) {
-            wp_die(__('You do not have sufficient permissions to access this page.', 'mzi-white-label-pro'));
+            wp_die(__('You do not have sufficient permissions to access this page.', 'mikrotek-wp-toolkit'));
         }
 
         $message = '';
         $message_type = 'updated';
 
         // Handle Toggle Enable/Disable Audit Trail
-        if (isset($_POST['mzi_wlp_action']) && 'toggle_audit_trail' === $_POST['mzi_wlp_action']) {
-            check_admin_referer('mzi_wlp_audit_toggle_action', 'mzi_wlp_nonce');
+        if (isset($_POST['mikrotek_wpt_action']) && 'toggle_audit_trail' === $_POST['mikrotek_wpt_action']) {
+            check_admin_referer('mikrotek_wpt_audit_toggle_action', 'mikrotek_wpt_nonce');
 
-            $options = MZI_White_Label_Pro_Settings::all();
+            $options = Mikrotek_WP_Toolkit_Settings::all();
             $enable_val = isset($_POST['enable_audit_trail']) && '1' === $_POST['enable_audit_trail'] ? '1' : '';
             $options['enable_audit_trail'] = $enable_val;
             $options['__fields'] = 'enable_audit_trail';
 
-            update_option(MZI_White_Label_Pro_Settings::option_name(), $options);
+            update_option(Mikrotek_WP_Toolkit_Settings::option_name(), $options);
 
             $status_text = !empty($enable_val) ? 'Diaktifkan' : 'Dinonaktifkan';
             $message = 'Audit Trail Log Recording berhasil ' . $status_text . '.';
         }
 
         // Handle Clear Audit Logs
-        if (isset($_POST['mzi_wlp_action']) && 'clear_audit_logs' === $_POST['mzi_wlp_action']) {
-            check_admin_referer('mzi_wlp_audit_clear_action', 'mzi_wlp_nonce');
+        if (isset($_POST['mikrotek_wpt_action']) && 'clear_audit_logs' === $_POST['mikrotek_wpt_action']) {
+            check_admin_referer('mikrotek_wpt_audit_clear_action', 'mikrotek_wpt_nonce');
 
             update_option(self::OPTION_LOGS, []);
             $message = 'Seluruh catatan Audit Trail berhasil dibersihkan.';
         }
 
         $is_enabled = self::is_enabled();
-        $logs = get_option(self::OPTION_LOGS, []);
-        if (!is_array($logs)) {
-            $logs = [];
-        }
+        $logs = self::get_logs();
 
         $search_query = isset($_GET['s']) ? trim(sanitize_text_field(wp_unslash($_GET['s']))) : '';
         $orderby      = isset($_GET['orderby']) ? sanitize_key($_GET['orderby']) : 'timestamp';
@@ -275,7 +280,7 @@ class MZI_White_Label_Pro_Audit {
 
         $build_sort_url = function($col) use ($orderby, $order, $search_query) {
             $new_order = ($orderby === $col && 'asc' === $order) ? 'desc' : 'asc';
-            $url = admin_url('admin.php?page=mzi-white-label-audit&orderby=' . $col . '&order=' . $new_order);
+            $url = admin_url('admin.php?page=mikrotek-wp-toolkit-audit&orderby=' . $col . '&order=' . $new_order);
             if (!empty($search_query)) {
                 $url = add_query_arg('s', urlencode($search_query), $url);
             }
@@ -290,7 +295,7 @@ class MZI_White_Label_Pro_Audit {
         };
 
         $export_args = [
-            'page'   => 'mzi-white-label-audit',
+            'page'   => 'mikrotek-wp-toolkit-audit',
             'action' => 'export_csv',
         ];
         if (!empty($search_query)) {
@@ -299,13 +304,13 @@ class MZI_White_Label_Pro_Audit {
 
         $export_url = wp_nonce_url(
             add_query_arg($export_args, admin_url('admin.php')),
-            'mzi_wlp_audit_export_action',
-            'mzi_wlp_nonce'
+            'mikrotek_wpt_audit_export_action',
+            'mikrotek_wpt_nonce'
         );
 
         ?>
-        <div class="wrap mzi-wlp-wrap">
-            <h1>MZI Audit Trail</h1>
+        <div class="wrap mikrotek-wpt-wrap">
+            <h1>Mikrotek Audit Trail</h1>
             <p class="description">
                 Pantau seluruh aktivitas penting pengguna (login, logout, edit konten, aktivasi/deaktivasi/hapus plugin, instalasi tema, dll) untuk keamanan situs.
             </p>
@@ -317,7 +322,7 @@ class MZI_White_Label_Pro_Audit {
             <?php endif; ?>
 
             <!-- Header Card: Status & Toggle -->
-            <div class="mzi-wlp-card" style="margin-top: 20px;">
+            <div class="mikrotek-wpt-card" style="background:#fff;border:1px solid #ccd0d4;padding:20px;border-radius:8px;margin-top: 20px;">
                 <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:15px;">
                     <div>
                         <h2 style="margin:0 0 5px 0;">Status Perekaman Audit Trail</h2>
@@ -327,8 +332,8 @@ class MZI_White_Label_Pro_Audit {
                     </div>
                     <div>
                         <form method="post" action="">
-                            <?php wp_nonce_field('mzi_wlp_audit_toggle_action', 'mzi_wlp_nonce'); ?>
-                            <input type="hidden" name="mzi_wlp_action" value="toggle_audit_trail">
+                            <?php wp_nonce_field('mikrotek_wpt_audit_toggle_action', 'mikrotek_wpt_nonce'); ?>
+                            <input type="hidden" name="mikrotek_wpt_action" value="toggle_audit_trail">
 
                             <?php if ($is_enabled) : ?>
                                 <input type="hidden" name="enable_audit_trail" value="0">
@@ -349,13 +354,13 @@ class MZI_White_Label_Pro_Audit {
             </div>
 
             <!-- Audit Logs Table -->
-            <div class="mzi-wlp-card" style="margin-top: 24px;">
+            <div class="mikrotek-wpt-card" style="background:#fff;border:1px solid #ccd0d4;padding:20px;border-radius:8px;margin-top: 24px;">
                 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:15px;flex-wrap:wrap;gap:10px;">
                     <h2 style="margin:0;">Catatan Aktivitas Log (<?php echo count($logs); ?>)</h2>
 
                     <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
                         <form method="get" action="" style="margin:0;">
-                            <input type="hidden" name="page" value="mzi-white-label-audit">
+                            <input type="hidden" name="page" value="mikrotek-wp-toolkit-audit">
                             <?php if (!empty($orderby)) : ?>
                                 <input type="hidden" name="orderby" value="<?php echo esc_attr($orderby); ?>">
                                 <input type="hidden" name="order" value="<?php echo esc_attr($order); ?>">
@@ -363,7 +368,7 @@ class MZI_White_Label_Pro_Audit {
                             <input type="search" name="s" value="<?php echo esc_attr($search_query); ?>" placeholder="Cari user, event, IP..." class="regular-text">
                             <button type="submit" class="button">Cari</button>
                             <?php if (!empty($search_query)) : ?>
-                                <a href="<?php echo esc_url(admin_url('admin.php?page=mzi-white-label-audit')); ?>" class="button">Reset</a>
+                                <a href="<?php echo esc_url(admin_url('admin.php?page=mikrotek-wp-toolkit-audit')); ?>" class="button">Reset</a>
                             <?php endif; ?>
                         </form>
 
@@ -373,8 +378,8 @@ class MZI_White_Label_Pro_Audit {
                             </a>
 
                             <form method="post" action="" onsubmit="return confirm('Apakah Anda yakin ingin menghapus seluruh log audit trail?');" style="margin:0;">
-                                <?php wp_nonce_field('mzi_wlp_audit_clear_action', 'mzi_wlp_nonce'); ?>
-                                <input type="hidden" name="mzi_wlp_action" value="clear_audit_logs">
+                                <?php wp_nonce_field('mikrotek_wpt_audit_clear_action', 'mikrotek_wpt_nonce'); ?>
+                                <input type="hidden" name="mikrotek_wpt_action" value="clear_audit_logs">
                                 <button type="submit" class="button button-link-delete">Bersihkan Log</button>
                             </form>
                         <?php endif; ?>
@@ -441,4 +446,9 @@ class MZI_White_Label_Pro_Audit {
         </div>
         <?php
     }
+}
+
+// Class alias for backward compatibility
+if (!class_exists('MZI_White_Label_Pro_Audit')) {
+    class_alias('Mikrotek_WP_Toolkit_Audit', 'MZI_White_Label_Pro_Audit');
 }

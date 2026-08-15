@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class MZI_White_Label_Pro_Security {
+class Mikrotek_WP_Toolkit_Security {
 
     public function __construct() {
         remove_action('wp_head', 'wp_generator');
@@ -24,7 +24,7 @@ class MZI_White_Label_Pro_Security {
     }
 
     public function handle_custom_login_url() {
-        $slug = trim(MZI_White_Label_Pro_Settings::get('custom_login_slug'));
+        $slug = trim(Mikrotek_WP_Toolkit_Settings::get('custom_login_slug'));
         if (empty($slug)) {
             return;
         }
@@ -36,7 +36,7 @@ class MZI_White_Label_Pro_Security {
         $custom_path = untrailingslashit(wp_parse_url(home_url('/' . $slug), PHP_URL_PATH));
         $wp_login_path = untrailingslashit(wp_parse_url(site_url('wp-login.php'), PHP_URL_PATH));
 
-        // 1. MATCH: User requested custom login slug (e.g. /rahasia or /wordpress/rahasia)
+        // 1. MATCH: User requested custom login slug (e.g. /masuk or /rahasia)
         if ($req_path === $custom_path) {
             remove_action('template_redirect', 'redirect_canonical');
             add_action('wp_loaded', function() {
@@ -60,122 +60,110 @@ class MZI_White_Label_Pro_Security {
             return;
         }
 
-        // 2. BLOCK: Direct /wp-login.php or unauthenticated /wp-admin access
-        $wp_admin_path = untrailingslashit(wp_parse_url(admin_url(), PHP_URL_PATH));
-
-        if (!is_user_logged_in() && !wp_doing_ajax()) {
-            if ($req_path === $wp_admin_path || strpos($req_path, 'wp-admin') !== false || $req_path === $wp_login_path || strpos($req_path, 'wp-login.php') !== false) {
+        // 2. BLOCK: Direct /wp-login.php or /wp-admin access for non-logged in users when custom slug is set
+        if (!is_user_logged_in()) {
+            if ($req_path === $wp_login_path || false !== strpos($request_uri, 'wp-login.php')) {
                 if (isset($_GET['action']) && in_array($_GET['action'], ['logout', 'postpass', 'lostpassword', 'resetpass', 'register'], true)) {
                     return;
                 }
 
-                if (isset($_POST['log']) || isset($_POST['wp-submit'])) {
-                    return;
-                }
+                $this->render_404_page();
+            }
 
-                add_action('wp_loaded', function() {
-                    global $wp_query;
-                    status_header(404);
-                    nocache_headers();
-                    if ($wp_query) {
-                        $wp_query->set_404();
-                    }
-                    include get_query_template('404');
-                    die;
-                });
+            if (is_admin() && !wp_doing_ajax()) {
+                $this->render_404_page();
             }
         }
     }
 
+    private function render_404_page() {
+        global $wp_query;
+        if ($wp_query) {
+            $wp_query->set_404();
+        }
+        status_header(404);
+        nocache_headers();
+
+        $template = get_404_template();
+        if ($template && file_exists($template)) {
+            include $template;
+        } else {
+            wp_die(__('Halaman tidak ditemukan.', 'mikrotek-wp-toolkit'), '404 Not Found', ['response' => 404]);
+        }
+        exit;
+    }
+
     public function filter_login_url($url, $path, $scheme) {
-        $slug = trim(MZI_White_Label_Pro_Settings::get('custom_login_slug'));
+        if ('login' !== $scheme && 'login_post' !== $scheme) {
+            return $url;
+        }
+
+        $slug = trim(Mikrotek_WP_Toolkit_Settings::get('custom_login_slug'));
         if (empty($slug)) {
             return $url;
         }
 
-        if ('wp-login.php' === $path || strpos($url, 'wp-login.php') !== false) {
-            return home_url('/' . sanitize_title($slug));
+        $slug = sanitize_title($slug);
+
+        return home_url('/' . $slug);
+    }
+
+    public function filter_login_url_single($login_url, $redirect) {
+        $slug = trim(Mikrotek_WP_Toolkit_Settings::get('custom_login_slug'));
+        if (empty($slug)) {
+            return $login_url;
+        }
+
+        $slug = sanitize_title($slug);
+        $url = home_url('/' . $slug);
+
+        if (!empty($redirect)) {
+            $url = add_query_arg('redirect_to', urlencode($redirect), $url);
         }
 
         return $url;
     }
 
-    public function filter_login_url_single($login_url, $redirect) {
-        $slug = trim(MZI_White_Label_Pro_Settings::get('custom_login_slug'));
-        if (empty($slug)) {
-            return $login_url;
-        }
-
-        $custom_url = home_url('/' . sanitize_title($slug));
-        if (!empty($redirect)) {
-            $custom_url = add_query_arg('redirect_to', urlencode($redirect), $custom_url);
-        }
-
-        return $custom_url;
-    }
-
     public function generic_login_errors($error) {
-        if (MZI_White_Label_Pro_Settings::enabled('hide_login_errors')) {
-            return __('<strong>ERROR</strong>: Invalid username, email address, or password.', 'mzi-white-label-pro');
+        if (Mikrotek_WP_Toolkit_Settings::enabled('hide_login_errors')) {
+            return __('<strong>ERROR</strong>: Invalid username, email address, or password.', 'mikrotek-wp-toolkit');
         }
 
         return $error;
     }
 
     public function client_mode_restriction() {
-        if (empty(MZI_White_Label_Pro_Settings::get('client_mode'))) {
+        if (!Mikrotek_WP_Toolkit_Settings::enabled('client_mode') || current_user_can('administrator')) {
             return;
         }
 
-        if (current_user_can('administrator')) {
-            return;
-        }
-
-        remove_menu_page('plugins.php');
-        remove_menu_page('themes.php');
-        remove_menu_page('tools.php');
         remove_menu_page('options-general.php');
+        remove_menu_page('plugins.php');
+        remove_menu_page('tools.php');
     }
 
     public function hide_update_notices() {
-        if (!$this->should_hide_update_notices()) {
+        if (!Mikrotek_WP_Toolkit_Settings::enabled('hide_update_notices') || current_user_can('administrator')) {
             return;
         }
 
         remove_action('admin_notices', 'update_nag', 3);
         remove_action('network_admin_notices', 'update_nag', 3);
+        add_filter('pre_site_transient_update_core', '__return_null');
+        add_filter('pre_site_transient_update_plugins', '__return_null');
+        add_filter('pre_site_transient_update_themes', '__return_null');
     }
 
     public function hide_update_notice_styles() {
-        if (!$this->should_hide_update_notices()) {
+        if (!Mikrotek_WP_Toolkit_Settings::enabled('hide_update_notices') || current_user_can('administrator')) {
             return;
         }
 
-        ?>
-        <style>
-            .update-nag,
-            .plugin-update-tr,
-            .theme-update-message,
-            .update-message,
-            .notice.update-message,
-            .notice.notice-warning.update-message,
-            .wp-list-table .update,
-            .wp-menu-name .update-plugins {
-                display: none !important;
-            }
-        </style>
-        <?php
+        echo '<style>.update-nag, .plugin-update-tr, .theme-update-message, #wp-admin-bar-updates { display: none !important; }</style>';
     }
+}
 
-    private function should_hide_update_notices() {
-        if (!MZI_White_Label_Pro_Settings::enabled('client_mode')) {
-            return false;
-        }
-
-        if (!MZI_White_Label_Pro_Settings::enabled('hide_update_notices')) {
-            return false;
-        }
-
-        return !current_user_can('administrator');
-    }
+// Class alias for backward compatibility
+if (!class_exists('MZI_White_Label_Pro_Security')) {
+    class_alias('Mikrotek_WP_Toolkit_Security', 'MZI_White_Label_Pro_Security');
 }
