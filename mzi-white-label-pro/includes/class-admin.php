@@ -17,8 +17,6 @@ class MZI_White_Label_Pro_Admin {
         'advanced'  => 'Advanced',
         'misc'      => 'Misc',
         'compat'    => 'Compatibility',
-        'system'    => 'System Info',
-        'changelog' => 'Change Log',
     ];
 
     public function __construct() {

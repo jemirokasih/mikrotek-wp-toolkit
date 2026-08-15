@@ -12,6 +12,21 @@ class MZI_White_Label_Pro_Changelog {
 
     public static function entries() {
         return [
+            '4.0.0' => [
+                'Added' => [
+                    'Sistem arsitektur modular baru untuk performa dan kemudahan maintenance.',
+                    'Standalone Redirection Manager (301 Permanent, 302/307 Temporary) dengan hit counter.',
+                    'Database URL Migration Tool (Search & Replace) dengan dukungan Safe Serialized Handler dan Regular Expression (Regex).',
+                    'Lightweight Broken Link Checker (on-demand scan tanpa beban background server).',
+                    'Custom Login URL Changer (/masuk, /rahasia) dan blokir direct access /wp-login.php & /wp-admin ke 404 Not Found.',
+                    'Username Enumeration Protection (Obscure Login Errors).',
+                    'Audit Trail Log Manager dengan mandatory enable toggle, Search & Filter, Table Sorting, dan Export to CSV.',
+                    'Sub-menu About Info yang menampilkan versi terpasang, ringkasan sistem server, dan riwayat changelog.',
+                ],
+                'Security' => [
+                    'Peningkatan keamanan input validation, sanitization, nonce verification, dan output escaping di seluruh modul.',
+                ],
+            ],
             '3.0.2' => [
                 'Fixed' => [
                     'Fixed WordPress.org Plugin Check findings.',
