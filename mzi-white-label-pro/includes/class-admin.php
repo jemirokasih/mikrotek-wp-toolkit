@@ -74,6 +74,15 @@ class MZI_White_Label_Pro_Admin {
 
         add_submenu_page(
             'mzi-white-label',
+            'Utility Shortcodes',
+            'Shortcodes',
+            'manage_options',
+            'mzi-white-label-shortcodes',
+            ['MZI_White_Label_Pro_Shortcodes', 'render_shortcodes_page']
+        );
+
+        add_submenu_page(
+            'mzi-white-label',
             'About & Information',
             'About Info',
             'manage_options',
@@ -93,7 +102,7 @@ class MZI_White_Label_Pro_Admin {
     }
 
     public function enqueue_assets($hook) {
-        if (!in_array($hook, ['toplevel_page_mzi-white-label', 'mzi-white-label_page_mzi-white-label-tools', 'mzi-white-label_page_mzi-white-label-redirects', 'mzi-white-label_page_mzi-white-label-audit', 'mzi-white-label_page_mzi-white-label-about'], true)) {
+        if (!in_array($hook, ['toplevel_page_mzi-white-label', 'mzi-white-label_page_mzi-white-label-tools', 'mzi-white-label_page_mzi-white-label-redirects', 'mzi-white-label_page_mzi-white-label-audit', 'mzi-white-label_page_mzi-white-label-about', 'mzi-white-label_page_mzi-white-label-shortcodes'], true)) {
             return;
         }
 
