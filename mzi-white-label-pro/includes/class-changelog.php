@@ -6,6 +6,10 @@ if (!defined('ABSPATH')) {
 
 class MZI_White_Label_Pro_Changelog {
 
+    public static function get_all() {
+        return self::entries();
+    }
+
     public static function entries() {
         return [
             '3.0.2' => [

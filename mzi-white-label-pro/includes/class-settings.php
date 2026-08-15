@@ -18,6 +18,10 @@ class MZI_White_Label_Pro_Settings {
         return is_array($settings) ? $settings : [];
     }
 
+    public static function get_all() {
+        return self::all();
+    }
+
     public static function get($key, $default = '') {
         $settings = self::all();
 
@@ -42,6 +46,7 @@ class MZI_White_Label_Pro_Settings {
             'admin_logo',
             'favicon',
             'login_background',
+            'default_featured_image',
         ];
 
         $email_fields = [
@@ -61,6 +66,14 @@ class MZI_White_Label_Pro_Settings {
             'hide_login_language_switcher',
             'protect_wordfence',
             'hide_update_notices',
+            'hide_login_errors',
+            'smtp_auth',
+            'hide_plugin_update_notices',
+            'hide_theme_update_notices',
+            'hide_core_update_notices',
+            'disable_screen_options',
+            'disable_help_tab',
+            'enable_audit_trail',
         ];
 
         foreach ($url_fields as $field) {
@@ -85,8 +98,12 @@ class MZI_White_Label_Pro_Settings {
             'cms_name',
             'footer_text',
             'login_title',
+            'custom_login_slug',
             'mail_name',
             'dashboard_widget_title',
+            'smtp_host',
+            'smtp_username',
+            'smtp_password',
         ];
 
         $textarea_fields = [
@@ -99,6 +116,7 @@ class MZI_White_Label_Pro_Settings {
         $number_fields = [
             'login_logo_width',
             'login_logo_height',
+            'smtp_port',
         ];
 
         $color_fields = [
@@ -112,7 +130,10 @@ class MZI_White_Label_Pro_Settings {
         ];
 
         $select_fields = [
+            'login_layout'        => ['normal', 'sidepanel_left', 'sidepanel_right'],
             'login_form_position' => ['center', 'left', 'right'],
+            'mail_method'          => ['default', 'smtp'],
+            'smtp_encryption'     => ['none', 'ssl', 'tls'],
         ];
 
         foreach ($text_fields as $field) {
@@ -158,6 +179,10 @@ class MZI_White_Label_Pro_Settings {
     }
 
     private static function posted_fields($input) {
+        if (!isset($input['__fields'])) {
+            return array_keys($input);
+        }
+
         if (empty($input['__fields'])) {
             return [];
         }

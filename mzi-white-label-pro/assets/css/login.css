@@ -1,3 +1,4 @@
+/* Logo Styling */
 body.login h1 a {
     background-size: contain !important;
     background-repeat: no-repeat !important;
@@ -11,7 +12,118 @@ body.login {
     background-position: center;
 }
 
-.login form {
+/* Normal Layout (WordPress Default Box) */
+body.login:not(.login-sidepanel) .login form {
     border-radius: 14px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+}
+
+/* Modern Sidepanel Frameless Layout */
+body.login-sidepanel {
+    background-size: cover;
+    background-position: center;
+}
+
+body.login-sidepanel #login {
+    background: #ffffff;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.12);
+}
+
+/* Remove default WP card box border/shadow in sidepanel */
+body.login-sidepanel #loginform,
+body.login-sidepanel .login form {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 10px 0 !important;
+    margin-top: 10px !important;
+}
+
+/* Modern Form Typography & Input Styling */
+body.login-sidepanel .login label {
+    font-weight: 600 !important;
+    color: #374151 !important;
+    font-size: 13px !important;
+    margin-bottom: 6px !important;
+}
+
+body.login-sidepanel .login input[type="text"],
+body.login-sidepanel .login input[type="password"] {
+    border: 1px solid #d1d5db !important;
+    border-radius: 8px !important;
+    padding: 10px 14px !important;
+    font-size: 15px !important;
+    background: #f9fafb !important;
+    box-shadow: none !important;
+    transition: all 0.2s ease !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+}
+
+body.login-sidepanel .login input[type="text"]:focus,
+body.login-sidepanel .login input[type="password"]:focus {
+    border-color: #2563eb !important;
+    background: #ffffff !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+    outline: none !important;
+}
+
+/* Modern Button Styling */
+body.login-sidepanel .login .button-primary {
+    width: 100% !important;
+    min-height: 44px !important;
+    border-radius: 8px !important;
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    float: none !important;
+    margin-top: 15px !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
+    cursor: pointer !important;
+    transition: background 0.2s ease, transform 0.1s ease !important;
+}
+
+body.login-sidepanel .login .button-primary:hover {
+    transform: translateY(-1px);
+}
+
+body.login-sidepanel .forgetmenot {
+    float: none !important;
+    margin-bottom: 15px !important;
+}
+
+/* Modern Links Below Form */
+body.login-sidepanel #nav,
+body.login-sidepanel #backtoblog {
+    padding: 0 !important;
+    margin: 12px 0 0 0 !important;
+    text-align: center !important;
+    font-size: 13px !important;
+}
+
+body.login-sidepanel #nav a,
+body.login-sidepanel #backtoblog a {
+    color: #6b7280 !important;
+    text-decoration: none !important;
+    transition: color 0.2s ease !important;
+}
+
+body.login-sidepanel #nav a:hover,
+body.login-sidepanel #backtoblog a:hover {
+    color: #111827 !important;
+}
+
+/* Responsive Stacking for Mobile Devices */
+@media (max-width: 768px) {
+    body.login-sidepanel {
+        display: block !important;
+    }
+    body.login-sidepanel #login {
+        width: 100% !important;
+        min-height: auto !important;
+        margin: 20px auto !important;
+        padding: 30px 20px !important;
+        box-shadow: none !important;
+        background: #ffffff !important;
+        border-radius: 16px;
+    }
 }

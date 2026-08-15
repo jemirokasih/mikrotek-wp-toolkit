@@ -15,6 +15,7 @@ class MZI_White_Label_Pro_Branding {
         add_filter('login_headerurl', [$this, 'login_logo_url']);
         add_filter('login_headertext', [$this, 'login_logo_title']);
         add_filter('login_display_language_dropdown', [$this, 'login_language_dropdown']);
+        add_filter('login_body_class', [$this, 'add_login_body_classes']);
         add_filter('admin_footer_text', [$this, 'custom_admin_footer']);
         add_filter('update_footer', '__return_empty_string', 11);
         add_filter('gettext', [$this, 'replace_wordpress_text'], 20, 3);
@@ -55,6 +56,7 @@ class MZI_White_Label_Pro_Branding {
         $logo_height = absint(MZI_White_Label_Pro_Settings::get('login_logo_height'));
         $background_color = MZI_White_Label_Pro_Settings::get('login_background_color');
         $button_color = MZI_White_Label_Pro_Settings::get('login_button_color');
+        $layout = MZI_White_Label_Pro_Settings::get('login_layout', 'normal');
         $form_position = MZI_White_Label_Pro_Settings::get('login_form_position', 'center');
 
         if ($logo_width > 0) {
@@ -74,10 +76,18 @@ class MZI_White_Label_Pro_Branding {
             $css .= '.login .button-primary{background:' . $button_color . ';border-color:' . $button_color . ';}';
         }
 
-        if ('left' === $form_position) {
-            $css .= '#login{margin-left:8%;margin-right:auto;}';
-        } elseif ('right' === $form_position) {
-            $css .= '#login{margin-left:auto;margin-right:8%;}';
+        if ('sidepanel_left' === $layout) {
+            $css .= 'body.login{display:flex;flex-direction:row-reverse;justify-content:space-between;min-height:100vh;padding:0;margin:0;align-items:stretch;}';
+            $css .= 'body.login #login{width:420px;max-width:100%;min-height:100vh;margin:0 !important;padding:45px 35px !important;background:#ffffff;box-shadow:4px 0 25px rgba(0,0,0,0.15);display:flex;flex-direction:column;justify-content:center;box-sizing:border-box;}';
+        } elseif ('sidepanel_right' === $layout) {
+            $css .= 'body.login{display:flex;flex-direction:row;justify-content:space-between;min-height:100vh;padding:0;margin:0;align-items:stretch;}';
+            $css .= 'body.login #login{width:420px;max-width:100%;min-height:100vh;margin:0 !important;padding:45px 35px !important;background:#ffffff;box-shadow:-4px 0 25px rgba(0,0,0,0.15);display:flex;flex-direction:column;justify-content:center;box-sizing:border-box;}';
+        } else {
+            if ('left' === $form_position) {
+                $css .= '#login{margin-left:8%;margin-right:auto;}';
+            } elseif ('right' === $form_position) {
+                $css .= '#login{margin-left:auto;margin-right:8%;}';
+            }
         }
 
         if (MZI_White_Label_Pro_Settings::enabled('hide_login_back_to_site')) {
@@ -99,6 +109,16 @@ class MZI_White_Label_Pro_Branding {
         }
 
         return $display;
+    }
+
+    public function add_login_body_classes($classes) {
+        $layout = MZI_White_Label_Pro_Settings::get('login_layout', 'normal');
+        if (in_array($layout, ['sidepanel_left', 'sidepanel_right'], true)) {
+            $classes[] = 'login-sidepanel';
+            $classes[] = 'login-' . str_replace('_', '-', $layout);
+        }
+
+        return $classes;
     }
 
     public function login_logo_url() {

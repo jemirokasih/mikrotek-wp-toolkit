@@ -15,115 +15,10 @@ class MZI_White_Label_Pro_Admin {
         'email'     => 'Email',
         'theme'     => 'Admin Theme',
         'advanced'  => 'Advanced',
+        'misc'      => 'Misc',
         'compat'    => 'Compatibility',
         'system'    => 'System Info',
         'changelog' => 'Change Log',
-    ];
-
-    private $fields = [
-        'branding' => [
-            'login_logo'       => ['label' => 'Login Logo', 'type' => 'image', 'description' => 'Logo yang tampil di halaman login WordPress. Gunakan gambar PNG/SVG dengan background transparan untuk hasil rapi.'],
-            'admin_logo'       => ['label' => 'Admin Logo', 'type' => 'image', 'description' => 'Logo kecil yang menggantikan logo WordPress di admin bar.'],
-            'favicon'          => ['label' => 'Favicon', 'type' => 'image', 'description' => 'Icon browser untuk area admin dan login. Ukuran umum: 32x32 atau 512x512.'],
-            'login_background' => ['label' => 'Login Background', 'type' => 'image', 'description' => 'Gambar background halaman login. Akan ditampilkan cover memenuhi layar.'],
-            'cms_name'         => ['label' => 'CMS Name', 'type' => 'text', 'description' => 'Nama CMS/brand yang menggantikan teks WordPress di area yang aman untuk white label.'],
-            'footer_text'      => ['label' => 'Footer Text', 'type' => 'text', 'description' => 'Teks footer di dashboard admin. Bisa diisi nama agensi atau support brand.'],
-            'login_title'      => ['label' => 'Login Title', 'type' => 'text', 'description' => 'Teks tooltip/title pada logo login. Default mengikuti nama website.'],
-        ],
-        'login' => [
-            'login_logo_width'          => ['label' => 'Logo Width', 'type' => 'number', 'suffix' => 'px', 'description' => 'Lebar logo login dalam pixel. Kosongkan atau isi 0 untuk memakai ukuran default.'],
-            'login_logo_height'         => ['label' => 'Logo Height', 'type' => 'number', 'suffix' => 'px', 'description' => 'Tinggi area logo login dalam pixel. Berguna jika logo terlihat terlalu kecil atau terpotong.'],
-            'login_background_color'    => ['label' => 'Background Color', 'type' => 'color', 'description' => 'Warna background fallback jika tidak memakai gambar background. Format: #123456.'],
-            'login_button_color'        => ['label' => 'Button Color', 'type' => 'color', 'description' => 'Warna tombol utama di halaman login. Format: #123456.'],
-            'login_form_position'       => [
-                'label'   => 'Form Position',
-                'type'    => 'select',
-                'description' => 'Posisi form login di layar. Pilih kiri/kanan jika background punya area visual khusus.',
-                'choices' => [
-                    'center' => 'Center',
-                    'left'   => 'Left',
-                    'right'  => 'Right',
-                ],
-            ],
-            'hide_login_back_to_site'   => ['label' => 'Hide Back To Site Link', 'type' => 'checkbox', 'description' => 'Menyembunyikan link kembali ke website dari halaman login.'],
-            'hide_login_language_switcher' => ['label' => 'Hide Language Switcher', 'type' => 'checkbox', 'description' => 'Menyembunyikan dropdown bahasa WordPress di halaman login.'],
-            'login_custom_css'          => ['label' => 'Custom Login CSS', 'type' => 'textarea', 'description' => 'CSS tambahan khusus halaman login. Gunakan hanya untuk penyesuaian kecil.'],
-        ],
-        'menus' => [
-            'hidden_menus' => [
-                'label'   => 'Hide Menus In Client Mode',
-                'type'    => 'checkbox_group',
-                'choices' => [
-                    'index.php'                => 'Dashboard',
-                    'edit.php'                 => 'Posts',
-                    'upload.php'               => 'Media',
-                    'edit.php?post_type=page'  => 'Pages',
-                    'edit-comments.php'        => 'Comments',
-                    'themes.php'               => 'Appearance',
-                    'plugins.php'              => 'Plugins',
-                    'users.php'                => 'Users',
-                    'tools.php'                => 'Tools',
-                    'options-general.php'      => 'Settings',
-                ],
-                'description' => 'Hanya berlaku saat Client Mode aktif dan user bukan administrator. Menu Wordfence tetap dilindungi jika Compatibility Guard aktif.',
-            ],
-            'custom_hidden_menus' => [
-                'label'       => 'Custom Menu Slugs',
-                'type'        => 'textarea',
-                'description' => 'Satu slug menu per baris. Contoh: edit.php?post_type=product',
-            ],
-            'menu_renames' => [
-                'label'       => 'Rename Menus',
-                'type'        => 'textarea',
-                'description' => 'Satu aturan per baris dengan format slug|Label Baru. Contoh: edit.php|Articles',
-            ],
-        ],
-        'dashboard' => [
-            'dashboard_widget_enabled' => ['label' => 'Show Custom Welcome Widget', 'type' => 'checkbox', 'description' => 'Menampilkan widget welcome custom di halaman Dashboard WordPress.'],
-            'dashboard_widget_title'   => ['label' => 'Widget Title', 'type' => 'text', 'description' => 'Judul widget welcome custom. Jika kosong, default-nya Welcome.'],
-            'dashboard_widget_content' => ['label' => 'Widget Content', 'type' => 'textarea', 'description' => 'Isi widget welcome. Mendukung teks sederhana dan HTML aman WordPress.'],
-            'dashboard_hide_selected_widgets' => ['label' => 'Hide Selected Widgets', 'type' => 'checkbox', 'description' => 'Aktifkan untuk menyembunyikan widget dashboard yang dipilih di bawah.'],
-            'dashboard_hidden_widgets' => [
-                'label'   => 'Dashboard Widgets',
-                'type'    => 'checkbox_group',
-                'description' => 'Pilih widget dashboard bawaan/plugin yang ingin disembunyikan dari tampilan dashboard.',
-                'choices' => [
-                    'dashboard_primary'      => 'WordPress Events and News',
-                    'dashboard_quick_press'  => 'Quick Draft',
-                    'dashboard_activity'     => 'Activity',
-                    'dashboard_right_now'    => 'At a Glance',
-                    'dashboard_site_health'  => 'Site Health Status',
-                    'wpseo-dashboard-overview' => 'Yoast SEO Posts Overview',
-                    'e-dashboard-overview'      => 'Elementor Overview',
-                    'wpseo-wincher-dashboard-overview' => 'Yoast SEO / Wincher: Top Keyphrases',
-                ],
-            ],
-        ],
-        'security' => [
-            'client_mode' => ['label' => 'Enable Client Mode', 'type' => 'checkbox', 'description' => 'Mode aman untuk client: menyembunyikan menu sensitif dari user non-administrator.'],
-            'hide_update_notices' => ['label' => 'Hide Update Notices In Client Mode', 'type' => 'checkbox', 'description' => 'Menyembunyikan notifikasi update agar user client tidak panik. Administrator tetap bisa melihat update.'],
-        ],
-        'email' => [
-            'mail_name'  => ['label' => 'Sender Name', 'type' => 'text', 'description' => 'Nama pengirim default untuk email WordPress.'],
-            'mail_email' => ['label' => 'Sender Email', 'type' => 'email', 'description' => 'Alamat email pengirim default. Pastikan domain email sesuai agar deliverability tetap baik.'],
-        ],
-        'theme' => [
-            'dark_admin' => ['label' => 'Enable Dark Admin', 'type' => 'checkbox', 'description' => 'Mengaktifkan tampilan gelap sederhana untuk area admin WordPress.'],
-        ],
-        'advanced' => [
-            'disable_gutenberg' => ['label' => 'Disable Gutenberg', 'type' => 'checkbox', 'description' => 'Mematikan block editor untuk post agar editor klasik bisa digunakan oleh tema/plugin yang membutuhkannya.'],
-            'disable_comments'  => ['label' => 'Disable Comments', 'type' => 'checkbox', 'description' => 'Menutup komentar dan ping baru di frontend. Tidak menghapus komentar lama.'],
-            'disable_heartbeat' => ['label' => 'Disable Heartbeat', 'type' => 'checkbox', 'description' => 'Mematikan WordPress Heartbeat untuk mengurangi request admin. Halaman Wordfence tetap dilindungi.'],
-            'disable_xmlrpc'    => ['label' => 'Disable XMLRPC', 'type' => 'checkbox', 'description' => 'Mematikan XML-RPC jika website tidak memakai aplikasi/layanan yang membutuhkannya.'],
-        ],
-        'compat' => [
-            'protect_wordfence' => [
-                'label'       => 'Protect Wordfence Areas',
-                'type'        => 'checkbox',
-                'default'     => '1',
-                'description' => 'Direkomendasikan. Menjaga halaman, teks, menu, dan heartbeat Wordfence agar tidak terkena white-label override.',
-            ],
-        ],
     ];
 
     public function __construct() {
@@ -142,6 +37,51 @@ class MZI_White_Label_Pro_Admin {
             'dashicons-admin-customizer',
             2
         );
+
+        add_submenu_page(
+            'mzi-white-label',
+            'Settings',
+            'Settings',
+            'manage_options',
+            'mzi-white-label',
+            [$this, 'settings_page']
+        );
+
+        add_submenu_page(
+            'mzi-white-label',
+            'Redirection Manager',
+            'Redirections',
+            'manage_options',
+            'mzi-white-label-redirects',
+            ['MZI_White_Label_Pro_Redirects', 'render_redirects_page']
+        );
+
+        add_submenu_page(
+            'mzi-white-label',
+            'Audit Trail Log',
+            'Audit Trail',
+            'manage_options',
+            'mzi-white-label-audit',
+            ['MZI_White_Label_Pro_Audit', 'render_audit_page']
+        );
+
+        add_submenu_page(
+            'mzi-white-label',
+            'URL Migration Tool',
+            'Tools',
+            'manage_options',
+            'mzi-white-label-tools',
+            ['MZI_White_Label_Pro_Tools', 'render_tools_page']
+        );
+
+        add_submenu_page(
+            'mzi-white-label',
+            'About & Information',
+            'About Info',
+            'manage_options',
+            'mzi-white-label-about',
+            ['MZI_White_Label_Pro_About', 'render_about_page']
+        );
     }
 
     public function register_settings() {
@@ -155,21 +95,24 @@ class MZI_White_Label_Pro_Admin {
     }
 
     public function enqueue_assets($hook) {
-        if ('toplevel_page_mzi-white-label' !== $hook) {
+        if (!in_array($hook, ['toplevel_page_mzi-white-label', 'mzi-white-label_page_mzi-white-label-tools', 'mzi-white-label_page_mzi-white-label-redirects', 'mzi-white-label_page_mzi-white-label-audit', 'mzi-white-label_page_mzi-white-label-about'], true)) {
             return;
         }
 
         wp_enqueue_media();
+        wp_enqueue_style('wp-color-picker');
+        wp_enqueue_script('wp-color-picker');
+
         wp_enqueue_style(
             'mzi-wlp-admin',
             MZI_WLP_URL . 'assets/css/admin.css',
-            [],
+            ['wp-color-picker'],
             MZI_WLP_VERSION
         );
         wp_enqueue_script(
             'mzi-wlp-admin',
             MZI_WLP_URL . 'assets/js/admin.js',
-            ['jquery'],
+            ['jquery', 'wp-color-picker'],
             MZI_WLP_VERSION,
             true
         );
@@ -206,8 +149,9 @@ class MZI_White_Label_Pro_Admin {
             </nav>
 
             <?php
-            if (isset($this->fields[$active_tab])) {
-                $this->render_fields_tab($active_tab, $settings);
+            $fields = $this->get_tab_fields($active_tab);
+            if (!empty($fields)) {
+                $this->render_fields_tab($fields, $settings);
             } elseif ('system' === $active_tab) {
                 $this->render_system_tab();
             } elseif ('changelog' === $active_tab) {
@@ -218,21 +162,38 @@ class MZI_White_Label_Pro_Admin {
         <?php
     }
 
-    private function render_fields_tab($tab, $settings) {
-        $fields = $this->fields[$tab];
+    private function get_tab_fields($tab) {
+        $file = MZI_WLP_PATH . 'includes/admin/tabs/tab-' . $tab . '.php';
+        if (file_exists($file)) {
+            $result = require $file;
+            if (is_array($result)) {
+                return $result;
+            }
+        }
+        return [];
+    }
 
+    private function render_fields_tab($fields, $settings) {
         $this->open_form(array_keys($fields));
         ?>
-        <table class="form-table mzi-wlp-form-table">
-            <?php foreach ($fields as $key => $field) : ?>
-                <tr>
-                    <th scope="row"><?php echo esc_html($field['label']); ?></th>
-                    <td><?php $this->render_field($key, $field, $settings); ?></td>
-                </tr>
-            <?php endforeach; ?>
-        </table>
+        <div class="mzi-wlp-card">
+            <table class="form-table mzi-wlp-form-table">
+                <?php foreach ($fields as $key => $field) : ?>
+                    <tr>
+                        <th scope="row">
+                            <label for="<?php echo esc_attr($key); ?>">
+                                <?php echo esc_html($field['label']); ?>
+                            </label>
+                        </th>
+                        <td><?php $this->render_field($key, $field, $settings); ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </table>
+            <div class="mzi-wlp-submit-row">
+                <?php submit_button(); ?>
+            </div>
+        </div>
         <?php
-        submit_button();
         $this->close_form();
     }
 
@@ -251,6 +212,9 @@ class MZI_White_Label_Pro_Admin {
                 break;
             case 'email':
                 $this->input_field($key, $value, 'email');
+                break;
+            case 'password':
+                $this->input_field($key, $value, 'password');
                 break;
             case 'number':
                 $this->number_field($key, $value, $field);
@@ -276,47 +240,17 @@ class MZI_White_Label_Pro_Admin {
     }
 
     private function render_system_tab() {
-        ?>
-        <table class="widefat striped mzi-wlp-system-table">
-            <tbody>
-                <tr>
-                    <td><strong>PHP Version</strong></td>
-                    <td><?php echo esc_html(phpversion()); ?></td>
-                </tr>
-                <tr>
-                    <td><strong>WordPress Version</strong></td>
-                    <td><?php echo esc_html(get_bloginfo('version')); ?></td>
-                </tr>
-                <tr>
-                    <td><strong>Memory Limit</strong></td>
-                    <td><?php echo esc_html(ini_get('memory_limit')); ?></td>
-                </tr>
-                <tr>
-                    <td><strong>Server Software</strong></td>
-                    <td><?php echo esc_html($this->server_software()); ?></td>
-                </tr>
-            </tbody>
-        </table>
-        <?php
+        $file = MZI_WLP_PATH . 'includes/admin/tabs/tab-system.php';
+        if (file_exists($file)) {
+            require $file;
+        }
     }
 
     private function render_changelog_tab() {
-        foreach (MZI_White_Label_Pro_Changelog::entries() as $version => $groups) :
-            ?>
-            <div class="mzi-wlp-changelog">
-                <h2><?php echo esc_html('MZI White Label Pro v' . $version); ?></h2>
-
-                <?php foreach ($groups as $group => $items) : ?>
-                    <h3><?php echo esc_html($group); ?></h3>
-                    <ul>
-                        <?php foreach ($items as $item) : ?>
-                            <li><?php echo esc_html($item); ?></li>
-                        <?php endforeach; ?>
-                    </ul>
-                <?php endforeach; ?>
-            </div>
-            <?php
-        endforeach;
+        $file = MZI_WLP_PATH . 'includes/admin/tabs/tab-changelog.php';
+        if (file_exists($file)) {
+            require $file;
+        }
     }
 
     private function open_form($fields) {
@@ -407,6 +341,7 @@ class MZI_White_Label_Pro_Admin {
     }
 
     private function image_field($key, $value) {
+        $has_image = !empty($value);
         ?>
         <div class="mzi-wlp-media-field">
             <input type="text"
@@ -415,14 +350,14 @@ class MZI_White_Label_Pro_Admin {
                    id="<?php echo esc_attr($key); ?>"
                    value="<?php echo esc_attr($value); ?>">
 
-            <button type="button" class="button mzi-upload-button" data-target="<?php echo esc_attr($key); ?>">
-                <?php esc_html_e('Upload', 'mzi-white-label-pro'); ?>
+            <button type="button" class="button button-secondary mzi-upload-button" data-target="<?php echo esc_attr($key); ?>">
+                <span class="dashicons dashicons-upload" style="vertical-align:middle;margin-right:2px;"></span> <?php esc_html_e('Upload / Select', 'mzi-white-label-pro'); ?>
             </button>
-            <button type="button" class="button mzi-remove-button" data-target="<?php echo esc_attr($key); ?>">
+            <button type="button" class="button button-link-delete mzi-remove-button" data-target="<?php echo esc_attr($key); ?>" style="<?php echo $has_image ? '' : 'display:none;'; ?>">
                 <?php esc_html_e('Remove', 'mzi-white-label-pro'); ?>
             </button>
 
-            <div class="mzi-wlp-preview-wrap">
+            <div class="mzi-wlp-preview-wrap" id="<?php echo esc_attr($key); ?>_preview_wrap" style="<?php echo $has_image ? '' : 'display:none;'; ?>">
                 <img id="<?php echo esc_attr($key); ?>_preview"
                      class="mzi-wlp-image-preview"
                      src="<?php echo esc_url($value); ?>"
@@ -430,13 +365,5 @@ class MZI_White_Label_Pro_Admin {
             </div>
         </div>
         <?php
-    }
-
-    private function server_software() {
-        if (empty($_SERVER['SERVER_SOFTWARE'])) {
-            return '-';
-        }
-
-        return sanitize_text_field(wp_unslash($_SERVER['SERVER_SOFTWARE']));
     }
 }

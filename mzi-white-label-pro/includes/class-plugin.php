@@ -32,6 +32,11 @@ class MZI_White_Label_Pro_Plugin {
         require_once MZI_WLP_PATH . 'includes/modules/class-email.php';
         require_once MZI_WLP_PATH . 'includes/modules/class-advanced.php';
         require_once MZI_WLP_PATH . 'includes/modules/class-admin-theme.php';
+        require_once MZI_WLP_PATH . 'includes/modules/class-misc.php';
+        require_once MZI_WLP_PATH . 'includes/modules/class-tools.php';
+        require_once MZI_WLP_PATH . 'includes/modules/class-redirects.php';
+        require_once MZI_WLP_PATH . 'includes/modules/class-audit.php';
+        require_once MZI_WLP_PATH . 'includes/modules/class-about.php';
     }
 
     private function register_modules() {
@@ -44,5 +49,9 @@ class MZI_White_Label_Pro_Plugin {
         new MZI_White_Label_Pro_Email();
         new MZI_White_Label_Pro_Advanced();
         new MZI_White_Label_Pro_Admin_Theme();
+        new MZI_White_Label_Pro_Misc();
+        new MZI_White_Label_Pro_Redirects();
+        new MZI_White_Label_Pro_Audit();
+        new MZI_White_Label_Pro_About();
     }
 }
