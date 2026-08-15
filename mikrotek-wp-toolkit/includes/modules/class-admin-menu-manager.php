@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class MZI_White_Label_Pro_Admin_Menu_Manager {
+class Mikrotek_WP_Toolkit_Admin_Menu_Manager {
 
     public function __construct() {
         add_action('admin_menu', [$this, 'apply_menu_rules'], 1000);
@@ -20,7 +20,7 @@ class MZI_White_Label_Pro_Admin_Menu_Manager {
     }
 
     private function should_apply() {
-        if (!MZI_White_Label_Pro_Settings::enabled('client_mode')) {
+        if (!Mikrotek_WP_Toolkit_Settings::enabled('client_mode')) {
             return false;
         }
 
@@ -29,7 +29,7 @@ class MZI_White_Label_Pro_Admin_Menu_Manager {
             return false;
         }
 
-        $target_roles = MZI_White_Label_Pro_Settings::get('client_mode_roles', []);
+        $target_roles = Mikrotek_WP_Toolkit_Settings::get('client_mode_roles', []);
         if (is_array($target_roles) && !empty($target_roles)) {
             $user_roles = (array) $user->roles;
             return (bool) array_intersect($user_roles, $target_roles);
@@ -39,12 +39,12 @@ class MZI_White_Label_Pro_Admin_Menu_Manager {
     }
 
     private function hide_menus() {
-        $slugs = MZI_White_Label_Pro_Settings::get('hidden_menus', []);
+        $slugs = Mikrotek_WP_Toolkit_Settings::get('hidden_menus', []);
         $slugs = is_array($slugs) ? $slugs : [];
-        $custom_slugs = $this->lines_to_array(MZI_White_Label_Pro_Settings::get('custom_hidden_menus'));
+        $custom_slugs = $this->lines_to_array(Mikrotek_WP_Toolkit_Settings::get('custom_hidden_menus'));
 
         foreach (array_unique(array_merge($slugs, $custom_slugs)) as $slug) {
-            if (MZI_White_Label_Pro_Compatibility::is_protected_menu_slug($slug)) {
+            if (Mikrotek_WP_Toolkit_Compatibility::is_protected_menu_slug($slug)) {
                 continue;
             }
 
@@ -59,7 +59,7 @@ class MZI_White_Label_Pro_Admin_Menu_Manager {
             return;
         }
 
-        $rules = $this->parse_rename_rules(MZI_White_Label_Pro_Settings::get('menu_renames'));
+        $rules = $this->parse_rename_rules(Mikrotek_WP_Toolkit_Settings::get('menu_renames'));
 
         if (empty($rules)) {
             return;
@@ -70,7 +70,7 @@ class MZI_White_Label_Pro_Admin_Menu_Manager {
                 continue;
             }
 
-            if (MZI_White_Label_Pro_Compatibility::is_protected_menu_slug($item[2])) {
+            if (Mikrotek_WP_Toolkit_Compatibility::is_protected_menu_slug($item[2])) {
                 continue;
             }
 
@@ -100,4 +100,9 @@ class MZI_White_Label_Pro_Admin_Menu_Manager {
 
         return $rules;
     }
+}
+
+// Class alias for backward compatibility
+if (!class_exists('MZI_White_Label_Pro_Admin_Menu_Manager')) {
+    class_alias('Mikrotek_WP_Toolkit_Admin_Menu_Manager', 'MZI_White_Label_Pro_Admin_Menu_Manager');
 }
