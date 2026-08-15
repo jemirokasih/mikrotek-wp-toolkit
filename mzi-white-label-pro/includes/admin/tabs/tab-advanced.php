@@ -13,7 +13,7 @@ return [
     'maintenance_mode_type' => [
         'label'       => 'Mode Respons HTTP',
         'type'        => 'select',
-        'options'     => [
+        'choices'     => [
             '503' => '503 Service Unavailable (Maintenance)',
             '200' => '200 OK (Coming Soon)',
         ],

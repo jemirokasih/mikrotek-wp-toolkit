@@ -328,9 +328,10 @@ class MZI_White_Label_Pro_Admin {
     }
 
     private function select_field($key, $value, $field) {
+        $choices = isset($field['choices']) ? $field['choices'] : (isset($field['options']) ? $field['options'] : []);
         ?>
         <select name="<?php echo esc_attr(MZI_White_Label_Pro_Settings::field_name($key)); ?>">
-            <?php foreach ($field['choices'] as $choice_value => $label) : ?>
+            <?php foreach ($choices as $choice_value => $label) : ?>
                 <option value="<?php echo esc_attr($choice_value); ?>" <?php selected($value, $choice_value); ?>>
                     <?php echo esc_html($label); ?>
                 </option>
