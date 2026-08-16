@@ -29,7 +29,15 @@ class Mikrotek_WP_Toolkit_Maintenance {
         $title    = Mikrotek_WP_Toolkit_Settings::get('maintenance_title', 'Under Maintenance');
         $headline = Mikrotek_WP_Toolkit_Settings::get('maintenance_headline', 'Kami Akan Segera Kembali!');
         $message  = Mikrotek_WP_Toolkit_Settings::get('maintenance_message', 'Situs web kami saat ini sedang dalam pemeliharaan rutin. Silakan kembali beberapa saat lagi.');
-        $logo     = Mikrotek_WP_Toolkit_Settings::get('maintenance_logo', Mikrotek_WP_Toolkit_Settings::get('login_logo'));
+
+        $logo = Mikrotek_WP_Toolkit_Settings::get('maintenance_logo');
+        if (empty($logo)) {
+            $logo = Mikrotek_WP_Toolkit_Settings::get('login_logo');
+        }
+        if (empty($logo)) {
+            $logo = Mikrotek_WP_Toolkit_Settings::get('admin_logo');
+        }
+
         $bg_color = Mikrotek_WP_Toolkit_Settings::get('maintenance_bg_color', '#0f172a');
 
         if ('503' === $mode) {
@@ -69,9 +77,12 @@ class Mikrotek_WP_Toolkit_Maintenance {
                     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
                 }
                 .mikrotek-maintenance-logo {
-                    max-width: 180px;
-                    max-height: 90px;
+                    max-width: 220px;
+                    max-height: 110px;
+                    width: auto;
+                    height: auto;
                     margin-bottom: 24px;
+                    object-fit: contain;
                 }
                 h1 {
                     font-size: 26px;

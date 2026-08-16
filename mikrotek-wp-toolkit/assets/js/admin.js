@@ -4,7 +4,7 @@
     $(function() {
         // Initialize WordPress Color Picker
         if ($.fn.wpColorPicker) {
-            $('.mzi-wlp-color-field').wpColorPicker();
+            $('.mikrotek-wpt-color-field, .mzi-wlp-color-field').wpColorPicker();
         }
 
         // Toggle SMTP fields based on mail_method selection
@@ -23,14 +23,14 @@
         toggleSmtpFields();
 
         // Media Uploader
-        $('.mzi-upload-button').on('click', function(e) {
+        $(document).on('click', '.mikrotek-upload-button, .mzi-upload-button', function(e) {
             e.preventDefault();
 
             var target = $(this).data('target');
             var mediaUploader = wp.media({
-                title: typeof mziWlpMedia !== 'undefined' ? mziWlpMedia.title : 'Select Image',
+                title: typeof mikrotekMedia !== 'undefined' ? mikrotekMedia.title : 'Select Image',
                 button: {
-                    text: typeof mziWlpMedia !== 'undefined' ? mziWlpMedia.buttonText : 'Use this image'
+                    text: typeof mikrotekMedia !== 'undefined' ? mikrotekMedia.buttonText : 'Use this image'
                 },
                 multiple: false
             });
@@ -41,14 +41,14 @@
                 $('#' + target).val(attachment.url).trigger('change');
                 $('#' + target + '_preview').attr('src', attachment.url);
                 $('#' + target + '_preview_wrap').fadeIn(200);
-                $('.mzi-remove-button[data-target="' + target + '"]').show();
+                $('.mikrotek-remove-button[data-target="' + target + '"], .mzi-remove-button[data-target="' + target + '"]').show();
             });
 
             mediaUploader.open();
         });
 
         // Remove Image Button
-        $('.mzi-remove-button').on('click', function(e) {
+        $(document).on('click', '.mikrotek-remove-button, .mzi-remove-button', function(e) {
             e.preventDefault();
 
             var target = $(this).data('target');
