@@ -1,2 +1,9 @@
-.DS_Store
+# Local Agent Instructions & Notes (Ignored from Git Tracking)
+.agents/
+AGENTS.md
+hidden-feature.txt
+
+# Temporary / Build Artifacts
 *.zip
+.DS_Store
+*.log
