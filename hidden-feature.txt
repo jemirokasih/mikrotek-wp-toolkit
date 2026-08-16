@@ -1,0 +1,53 @@
+========================================================================
+CATATAN FITUR SEBENTAR DI-HIDE (TEMPORARILY HIDDEN FEATURES)
+Mikrotek WP Toolkit / MZI White Label Pro
+========================================================================
+
+Tanggal Disembunyikan: 16 Agustus 2026
+
+Berikut adalah daftar 2 fitur yang sementara waktu di-hide dari antarmuka (UI) Settings pada tab Admin Menus:
+
+------------------------------------------------------------------------
+1. FITUR: Custom Menu Slugs (Hidden)
+------------------------------------------------------------------------
+- Key Settings: `custom_hidden_menus`
+- Tipe Field: Textarea + 1-Click Preset Chips
+- Deskripsi:
+  Memungkinkan pengembang web menyembunyikan menu admin WordPress dari plugin pihak ketiga atau Custom Post Type (CPT) dengan cara memasukkan slug URL-nya (satu slug per baris).
+- Contoh Preset:
+  - `edit.php?post_type=product` (Produk WooCommerce)
+  - `woocommerce` (WooCommerce Utama)
+  - `elementor` (Elementor)
+  - `wpcf7` (Contact Form 7)
+- Kode Array yang Dihide dari tab-menus.php:
+  'custom_hidden_menus' => [
+      'label'       => 'Custom Menu Slugs (Hidden)',
+      'type'        => 'textarea',
+      'description' => $hidden_menus_desc,
+  ]
+
+------------------------------------------------------------------------
+2. FITUR: Rename Admin Menus
+------------------------------------------------------------------------
+- Key Settings: `menu_renames`
+- Tipe Field: Textarea + 1-Click Preset Chips
+- Deskripsi:
+  Memungkinkan pengembang web mengubah nama/label menu admin WordPress menjadi istilah lain yang lebih ramah bagi klien menggunakan format dipisahkan garis tegak `|` (`slug|Nama Baru`).
+- Contoh Preset:
+  - `edit.php|Artikel Blog`
+  - `edit.php?post_type=page|Halaman Website`
+  - `upload.php|Galeri Media`
+  - `edit-comments.php|Ulasan Pelanggan`
+  - `plugins.php|Ekstensi Web`
+  - `options-general.php|Pengaturan Sistem`
+- Kode Array yang Dihide dari tab-menus.php:
+  'menu_renames' => [
+      'label'       => 'Rename Admin Menus',
+      'type'        => 'textarea',
+      'description' => $menu_renames_desc,
+  ]
+
+------------------------------------------------------------------------
+CARA MENGEMBALIKAN FITUR INI (RE-ENABLE):
+Uncomment / masukkan kembali key `custom_hidden_menus` dan `menu_renames` ke dalam array return pada file `includes/admin/tabs/tab-menus.php`.
+========================================================================
