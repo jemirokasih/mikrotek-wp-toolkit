@@ -14,19 +14,23 @@ class Mikrotek_WP_Toolkit_Changelog {
         return [
             '4.0.0' => [
                 'Rebranding' => [
-                    'Resmi diluncurkan sebagai Mikrotek WP Toolkit.',
+                    'Resmi diluncurkan sebagai 100% Standalone Plugin Mikrotek WP Toolkit.',
                 ],
                 'Added' => [
-                    'Sistem arsitektur modular v4 baru untuk performa dan kemudahan maintenance.',
+                    'Sistem arsitektur modular v4 baru untuk performa dan kemudahan pemeliharaan.',
+                    'Overhaul UI/UX Admin Menus dengan chip preset 1-klik interaktif dan panduan visual lengkap.',
+                    'Enterprise MySQL Custom Table Audit Trail Engine (wp_mikrotek_audit_logs) dengan status kesehatan sistem, persetujuan aktivasi, opsi deaktivasi (Keep/Truncate/Drop), dan auto-prune retention.',
                     'Standalone Redirection Manager (301 Permanent, 302/307 Temporary) dengan hit counter.',
                     'Database URL Migration Tool (Search & Replace) dengan dukungan Safe Serialized Handler dan Regular Expression (Regex).',
                     'Lightweight Broken Link Checker (on-demand scan tanpa beban background server).',
                     'Custom Login URL Changer (/masuk, /rahasia) dan blokir direct access /wp-login.php & /wp-admin ke 404 Not Found.',
                     'Username Enumeration Protection (Obscure Login Errors & REST API /wp/v2/users blocking).',
-                    'Enterprise MySQL Custom Table Audit Trail dengan status kesehatan sistem, persetujuan aktivasi, opsi deaktivasi (Keep/Truncate/Drop), dan auto-prune retention.',
                     'Kumpulan Utility Shortcodes ([mikrotek_year], [wpt_year], dll) beserta dashboard dokumentasi & live preview.',
                     'Maintenance Mode / Coming Soon dengan kustomisasi logo, pesan, warna background, dan status HTTP 503/200.',
                     'Sub-menu About Info yang menampilkan versi terpasang, ringkasan sistem server, dan riwayat changelog.',
+                ],
+                'Refactored' => [
+                    'Pembersihan total seluruh legacy stub files, backward compatibility class_alias, dan konstanta MZI White Label Pro.',
                 ],
                 'Security' => [
                     'Peningkatan keamanan input validation, sanitization, nonce verification, dan output escaping di seluruh modul.',

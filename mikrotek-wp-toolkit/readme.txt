@@ -23,14 +23,16 @@ Mikrotek WP Toolkit helps replace default WordPress branding, simplify the admin
 == Changelog ==
 
 = 4.0.0 =
-* Complete rebranding to Mikrotek WP Toolkit.
+* Complete rebranding to 100% standalone Mikrotek WP Toolkit.
 * Added modular v4 architecture.
+* Overhauled Admin Menus UI/UX with 1-click preset chips.
+* Added Enterprise Custom MySQL Table Audit Trail (wp_mikrotek_audit_logs) with health metrics and auto-pruning.
 * Added Redirection Manager (301, 302, 307).
 * Added Database URL Migration Tool (Search & Replace).
 * Added Lightweight Broken Link Checker.
 * Added Custom Login URL Changer & 404 Guard.
 * Added Username Enumeration Protection.
-* Added Audit Trail Log Manager.
 * Added Utility Shortcodes collection.
 * Added Maintenance Mode / Coming Soon module.
 * Added About Info Sub-menu.
+* Purged all legacy code, aliases, and stub files.
