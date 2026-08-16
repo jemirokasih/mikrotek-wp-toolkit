@@ -35,10 +35,26 @@ class Mikrotek_WP_Toolkit_Plugin {
         require_once MIKROTEK_WPT_PATH . 'includes/modules/class-misc.php';
         require_once MIKROTEK_WPT_PATH . 'includes/modules/class-tools.php';
         require_once MIKROTEK_WPT_PATH . 'includes/modules/class-redirects.php';
+        require_once MIKROTEK_WPT_PATH . 'includes/modules/class-audit-table.php';
         require_once MIKROTEK_WPT_PATH . 'includes/modules/class-audit.php';
         require_once MIKROTEK_WPT_PATH . 'includes/modules/class-about.php';
         require_once MIKROTEK_WPT_PATH . 'includes/modules/class-shortcodes.php';
         require_once MIKROTEK_WPT_PATH . 'includes/modules/class-maintenance.php';
+
+        $this->setup_cron_tasks();
+    }
+
+    private function setup_cron_tasks() {
+        add_action('mikrotek_wpt_audit_daily_prune', function() {
+            $retention_days = absint(Mikrotek_WP_Toolkit_Settings::get('audit_log_retention', 30));
+            if ($retention_days > 0) {
+                Mikrotek_WP_Toolkit_Audit_Table::prune_expired_logs($retention_days);
+            }
+        });
+
+        if (!wp_next_scheduled('mikrotek_wpt_audit_daily_prune')) {
+            wp_schedule_event(time(), 'daily', 'mikrotek_wpt_audit_daily_prune');
+        }
     }
 
     private function register_modules() {

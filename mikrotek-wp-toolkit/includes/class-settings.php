@@ -157,6 +157,7 @@ class Mikrotek_WP_Toolkit_Settings {
             'mail_method'            => ['default', 'smtp'],
             'smtp_encryption'       => ['none', 'ssl', 'tls'],
             'maintenance_mode_type' => ['503', '200'],
+            'audit_log_retention'   => ['30', '0', '7', '60', '90', '180', '365'],
         ];
 
         foreach ($text_fields as $field) {
