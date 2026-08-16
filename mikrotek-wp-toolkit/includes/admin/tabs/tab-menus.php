@@ -26,27 +26,6 @@ $rename_presets = [
     ['rule' => 'options-general.php|Pengaturan Sistem', 'label' => 'Settings ➔ Pengaturan Sistem'],
 ];
 
-// Helper JS to append preset text to textareas
-$preset_js = '
-<script>
-function mikrotekAppendPreset(targetId, text) {
-    var el = document.getElementById(targetId);
-    if (!el) return;
-    var current = el.value.trim();
-    if (current.length > 0) {
-        var lines = current.split("\n");
-        if (lines.indexOf(text) !== -1) {
-            alert("Preset ini sudah ada dalam daftar.");
-            return;
-        }
-        el.value = current + "\n" + text;
-    } else {
-        el.value = text;
-    }
-    el.dispatchEvent(new Event("change"));
-}
-</script>';
-
 // Custom Hidden Menus Description HTML
 $hidden_menus_desc = '
 <div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:4px solid #4f46e5;padding:12px 16px;border-radius:6px;margin-top:8px;">
@@ -76,7 +55,7 @@ foreach ($slug_presets as $preset) {
 $hidden_menus_desc .= '
         </div>
     </div>
-</div>' . $preset_js;
+</div>';
 
 // Menu Renames Description HTML
 $menu_renames_desc = '

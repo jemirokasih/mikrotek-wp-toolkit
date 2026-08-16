@@ -1,6 +1,24 @@
 (function($) {
     'use strict';
 
+    // Global Preset Helper Function
+    window.mikrotekAppendPreset = function(targetId, text) {
+        var el = document.getElementById(targetId);
+        if (!el) return;
+        var current = el.value.trim();
+        if (current.length > 0) {
+            var lines = current.split("\n");
+            if (lines.indexOf(text) !== -1) {
+                alert("Preset ini sudah ada dalam daftar.");
+                return;
+            }
+            el.value = current + "\n" + text;
+        } else {
+            el.value = text;
+        }
+        el.dispatchEvent(new Event("change"));
+    };
+
     $(function() {
         // Initialize WordPress Color Picker
         if ($.fn.wpColorPicker) {
