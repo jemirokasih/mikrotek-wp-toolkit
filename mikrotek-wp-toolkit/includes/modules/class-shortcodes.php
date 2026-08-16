@@ -529,7 +529,4 @@ class Mikrotek_WP_Toolkit_Shortcodes {
     }
 }
 
-// Class alias for backward compatibility
-if (!class_exists('MZI_White_Label_Pro_Shortcodes')) {
-    class_alias('Mikrotek_WP_Toolkit_Shortcodes', 'MZI_White_Label_Pro_Shortcodes');
-}
+

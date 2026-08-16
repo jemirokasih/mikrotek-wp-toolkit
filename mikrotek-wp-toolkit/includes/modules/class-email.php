@@ -57,7 +57,4 @@ class Mikrotek_WP_Toolkit_Email {
     }
 }
 
-// Class alias for backward compatibility
-if (!class_exists('MZI_White_Label_Pro_Email')) {
-    class_alias('Mikrotek_WP_Toolkit_Email', 'MZI_White_Label_Pro_Email');
-}
+

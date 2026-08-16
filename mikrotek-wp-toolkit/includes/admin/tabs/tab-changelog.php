@@ -4,11 +4,9 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-foreach (MZI_White_Label_Pro_Changelog::entries() as $version => $groups) :
-    ?>
-    <div class="mzi-wlp-changelog">
-        <h2><?php echo esc_html('MZI White Label Pro v' . $version); ?></h2>
-
+foreach (Mikrotek_WP_Toolkit_Changelog::entries() as $version => $groups) : ?>
+    <div class="mikrotek-wpt-changelog-entry">
+        <h2><?php echo esc_html('Mikrotek WP Toolkit v' . $version); ?></h2>
         <?php foreach ($groups as $group => $items) : ?>
             <h3><?php echo esc_html($group); ?></h3>
             <ul>
@@ -18,5 +16,4 @@ foreach (MZI_White_Label_Pro_Changelog::entries() as $version => $groups) :
             </ul>
         <?php endforeach; ?>
     </div>
-    <?php
-endforeach;
+<?php endforeach; ?>

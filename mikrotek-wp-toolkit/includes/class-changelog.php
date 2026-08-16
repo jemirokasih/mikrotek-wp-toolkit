@@ -14,7 +14,7 @@ class Mikrotek_WP_Toolkit_Changelog {
         return [
             '4.0.0' => [
                 'Rebranding' => [
-                    'Resmi berganti nama dari MZI White Label Pro menjadi Mikrotek WP Toolkit.',
+                    'Resmi diluncurkan sebagai Mikrotek WP Toolkit.',
                 ],
                 'Added' => [
                     'Sistem arsitektur modular v4 baru untuk performa dan kemudahan maintenance.',
@@ -23,8 +23,8 @@ class Mikrotek_WP_Toolkit_Changelog {
                     'Lightweight Broken Link Checker (on-demand scan tanpa beban background server).',
                     'Custom Login URL Changer (/masuk, /rahasia) dan blokir direct access /wp-login.php & /wp-admin ke 404 Not Found.',
                     'Username Enumeration Protection (Obscure Login Errors & REST API /wp/v2/users blocking).',
-                    'Audit Trail Log Manager dengan mandatory enable toggle, Search & Filter, Table Sorting, dan Export to CSV.',
-                    'Kumpulan Utility Shortcodes ([mikrotek_year], [wpt_year], [mzi_year], [mzi_countdown], dll) beserta dashboard dokumentasi & live preview.',
+                    'Enterprise MySQL Custom Table Audit Trail dengan status kesehatan sistem, persetujuan aktivasi, opsi deaktivasi (Keep/Truncate/Drop), dan auto-prune retention.',
+                    'Kumpulan Utility Shortcodes ([mikrotek_year], [wpt_year], dll) beserta dashboard dokumentasi & live preview.',
                     'Maintenance Mode / Coming Soon dengan kustomisasi logo, pesan, warna background, dan status HTTP 503/200.',
                     'Sub-menu About Info yang menampilkan versi terpasang, ringkasan sistem server, dan riwayat changelog.',
                 ],
@@ -63,9 +63,4 @@ class Mikrotek_WP_Toolkit_Changelog {
             ],
         ];
     }
-}
-
-// Class alias for backward compatibility
-if (!class_exists('MZI_White_Label_Pro_Changelog')) {
-    class_alias('Mikrotek_WP_Toolkit_Changelog', 'MZI_White_Label_Pro_Changelog');
 }

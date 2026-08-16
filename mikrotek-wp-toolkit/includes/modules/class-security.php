@@ -163,7 +163,4 @@ class Mikrotek_WP_Toolkit_Security {
     }
 }
 
-// Class alias for backward compatibility
-if (!class_exists('MZI_White_Label_Pro_Security')) {
-    class_alias('Mikrotek_WP_Toolkit_Security', 'MZI_White_Label_Pro_Security');
-}
+

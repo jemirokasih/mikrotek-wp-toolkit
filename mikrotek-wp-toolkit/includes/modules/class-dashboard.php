@@ -69,7 +69,4 @@ class Mikrotek_WP_Toolkit_Dashboard {
     }
 }
 
-// Class alias for backward compatibility
-if (!class_exists('MZI_White_Label_Pro_Dashboard')) {
-    class_alias('Mikrotek_WP_Toolkit_Dashboard', 'MZI_White_Label_Pro_Dashboard');
-}
+

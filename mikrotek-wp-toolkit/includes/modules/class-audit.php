@@ -59,7 +59,7 @@ class Mikrotek_WP_Toolkit_Audit {
     }
 
     public function handle_export_csv() {
-        if (!isset($_GET['page']) || !in_array($_GET['page'], ['mikrotek-wp-toolkit-audit', 'mzi-white-label-audit'], true)) {
+        if (!isset($_GET['page']) || 'mikrotek-wp-toolkit-audit' !== $_GET['page']) {
             return;
         }
 
@@ -600,7 +600,4 @@ class Mikrotek_WP_Toolkit_Audit {
     }
 }
 
-// Class alias for backward compatibility
-if (!class_exists('MZI_White_Label_Pro_Audit')) {
-    class_alias('Mikrotek_WP_Toolkit_Audit', 'MZI_White_Label_Pro_Audit');
-}
+

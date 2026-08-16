@@ -75,8 +75,3 @@ class Mikrotek_WP_Toolkit_Plugin {
         new Mikrotek_WP_Toolkit_Maintenance();
     }
 }
-
-// Class alias for backward compatibility
-if (!class_exists('MZI_White_Label_Pro_Plugin')) {
-    class_alias('Mikrotek_WP_Toolkit_Plugin', 'MZI_White_Label_Pro_Plugin');
-}

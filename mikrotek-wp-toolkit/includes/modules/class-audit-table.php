@@ -146,7 +146,7 @@ class Mikrotek_WP_Toolkit_Audit_Table {
         $table_name = self::get_table_name();
 
         // Check if legacy logs exist in wp_options
-        $old_logs = get_option('mikrotek_wp_toolkit_audit_logs', get_option('mzi_white_label_audit_logs', []));
+        $old_logs = get_option('mikrotek_wp_toolkit_audit_logs', []);
         if (empty($old_logs) || !is_array($old_logs)) {
             return;
         }
@@ -172,7 +172,6 @@ class Mikrotek_WP_Toolkit_Audit_Table {
 
         // Clear option logs once migrated to prevent duplicate imports
         delete_option('mikrotek_wp_toolkit_audit_logs');
-        delete_option('mzi_white_label_audit_logs');
     }
 
     public static function prune_expired_logs($days) {
@@ -193,7 +192,4 @@ class Mikrotek_WP_Toolkit_Audit_Table {
     }
 }
 
-// Class alias for backward compatibility
-if (!class_exists('MZI_White_Label_Pro_Audit_Table')) {
-    class_alias('Mikrotek_WP_Toolkit_Audit_Table', 'MZI_White_Label_Pro_Audit_Table');
-}
+

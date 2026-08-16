@@ -7,22 +7,13 @@ if (!defined('ABSPATH')) {
 class Mikrotek_WP_Toolkit_Redirects {
 
     const OPTION_RULES = 'mikrotek_wp_toolkit_redirect_rules';
-    const OLD_OPTION_RULES = 'mzi_white_label_redirect_rules';
 
     public function __construct() {
         add_action('template_redirect', [$this, 'handle_frontend_redirects'], 1);
     }
 
     public static function get_rules() {
-        $rules = get_option(self::OPTION_RULES, null);
-        if (null === $rules || false === $rules) {
-            $old_rules = get_option(self::OLD_OPTION_RULES, []);
-            if (!empty($old_rules) && is_array($old_rules)) {
-                update_option(self::OPTION_RULES, $old_rules);
-                return $old_rules;
-            }
-            $rules = [];
-        }
+        $rules = get_option(self::OPTION_RULES, []);
         return is_array($rules) ? $rules : [];
     }
 
@@ -250,7 +241,4 @@ class Mikrotek_WP_Toolkit_Redirects {
     }
 }
 
-// Class alias for backward compatibility
-if (!class_exists('MZI_White_Label_Pro_Redirects')) {
-    class_alias('Mikrotek_WP_Toolkit_Redirects', 'MZI_White_Label_Pro_Redirects');
-}
+

@@ -103,7 +103,7 @@ class Mikrotek_WP_Toolkit_Admin {
 
     public function enqueue_assets($hook) {
         $page = isset($_GET['page']) ? sanitize_text_field(wp_unslash($_GET['page'])) : '';
-        $is_plugin_page = (false !== strpos($page, 'mikrotek') || false !== strpos($page, 'mzi') || false !== strpos((string)$hook, 'mikrotek') || false !== strpos((string)$hook, 'mzi'));
+        $is_plugin_page = (false !== strpos($page, 'mikrotek') || false !== strpos((string)$hook, 'mikrotek'));
 
         if (!$is_plugin_page) {
             return;
@@ -114,13 +114,13 @@ class Mikrotek_WP_Toolkit_Admin {
             'mikrotek-wpt-admin-css',
             MIKROTEK_WPT_URL . 'assets/css/admin.css',
             [],
-            time()
+            MIKROTEK_WPT_VERSION
         );
         wp_enqueue_script(
             'mikrotek-wpt-admin-js',
             MIKROTEK_WPT_URL . 'assets/js/admin.js',
             ['jquery', 'media-upload'],
-            time(),
+            MIKROTEK_WPT_VERSION,
             true
         );
     }
@@ -341,9 +341,4 @@ class Mikrotek_WP_Toolkit_Admin {
                value="<?php echo esc_attr($value ? $value : '#000000'); ?>">
         <?php
     }
-}
-
-// Class alias for backward compatibility
-if (!class_exists('MZI_White_Label_Pro_Admin')) {
-    class_alias('Mikrotek_WP_Toolkit_Admin', 'MZI_White_Label_Pro_Admin');
 }
