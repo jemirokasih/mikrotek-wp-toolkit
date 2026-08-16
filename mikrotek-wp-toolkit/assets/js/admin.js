@@ -22,19 +22,19 @@
         $('select[name*="[mail_method]"]').on('change', toggleSmtpFields);
         toggleSmtpFields();
 
-        // Media Uploader
-        $(document).on('click', '.mikrotek-upload-button, .mzi-upload-button', function(e) {
+        // Single-instance WordPress Media Uploader handler
+        $(document).off('click.mikrotekMedia').on('click.mikrotekMedia', '.mikrotek-upload-button, .mzi-upload-button', function(e) {
             e.preventDefault();
+            e.stopPropagation();
 
             var $btn = $(this);
-            var target = $btn.attr('data-target') || $btn.data('target');
+            var targetId = $btn.attr('data-target') || $btn.data('target');
 
-            if (typeof wp === 'undefined' || !wp.media) {
-                alert('WordPress Media Uploader is loading or unavailable. Please refresh the page.');
-                return;
+            if (!targetId || typeof wp === 'undefined' || !wp.media) {
+                return false;
             }
 
-            var mediaUploader = wp.media({
+            var frame = wp.media({
                 title: 'Upload or Select Image',
                 button: {
                     text: 'Use This Image'
@@ -42,30 +42,35 @@
                 multiple: false
             });
 
-            mediaUploader.on('select', function() {
-                var attachment = mediaUploader.state().get('selection').first().toJSON();
+            frame.on('select', function() {
+                var attachment = frame.state().get('selection').first().toJSON();
                 if (attachment && attachment.url) {
-                    $('#' + target).val(attachment.url).trigger('change');
-                    $('#' + target + '_preview').attr('src', attachment.url);
-                    $('#' + target + '_preview_wrap').show();
-                    $('[data-target="' + target + '"].mikrotek-remove-button, [data-target="' + target + '"].mzi-remove-button').show();
+                    $('#' + targetId).val(attachment.url).trigger('change');
+                    $('#' + targetId + '_preview').attr('src', attachment.url);
+                    $('#' + targetId + '_preview_wrap').css('display', 'block').show();
+                    $('[data-target="' + targetId + '"]').filter('.mikrotek-remove-button, .mzi-remove-button').css('display', 'inline-block').show();
                 }
             });
 
-            mediaUploader.open();
+            frame.open();
+            return false;
         });
 
-        // Remove Image Button
-        $(document).on('click', '.mikrotek-remove-button, .mzi-remove-button', function(e) {
+        // Single-instance Remove Image handler
+        $(document).off('click.mikrotekRemove').on('click.mikrotekRemove', '.mikrotek-remove-button, .mzi-remove-button', function(e) {
             e.preventDefault();
+            e.stopPropagation();
 
             var $btn = $(this);
-            var target = $btn.attr('data-target') || $btn.data('target');
+            var targetId = $btn.attr('data-target') || $btn.data('target');
 
-            $('#' + target).val('').trigger('change');
-            $('#' + target + '_preview').attr('src', '');
-            $('#' + target + '_preview_wrap').hide();
-            $btn.hide();
+            if (targetId) {
+                $('#' + targetId).val('').trigger('change');
+                $('#' + targetId + '_preview').attr('src', '');
+                $('#' + targetId + '_preview_wrap').hide();
+                $btn.hide();
+            }
+            return false;
         });
     });
 })(jQuery);

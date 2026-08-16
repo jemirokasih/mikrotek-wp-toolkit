@@ -102,8 +102,10 @@ class Mikrotek_WP_Toolkit_Admin {
     }
 
     public function enqueue_assets($hook) {
-        $page = isset($_GET['page']) ? sanitize_key($_GET['page']) : '';
-        if (empty($page) || (false === strpos($page, 'mikrotek-wp-toolkit') && false === strpos($page, 'mzi-white-label'))) {
+        $page = isset($_GET['page']) ? sanitize_text_field(wp_unslash($_GET['page'])) : '';
+        $is_plugin_page = (false !== strpos($page, 'mikrotek') || false !== strpos($page, 'mzi') || false !== strpos((string)$hook, 'mikrotek') || false !== strpos((string)$hook, 'mzi'));
+
+        if (!$is_plugin_page) {
             return;
         }
 
@@ -112,13 +114,13 @@ class Mikrotek_WP_Toolkit_Admin {
             'mikrotek-wpt-admin-css',
             MIKROTEK_WPT_URL . 'assets/css/admin.css',
             [],
-            MIKROTEK_WPT_VERSION
+            time()
         );
         wp_enqueue_script(
             'mikrotek-wpt-admin-js',
             MIKROTEK_WPT_URL . 'assets/js/admin.js',
-            ['jquery'],
-            MIKROTEK_WPT_VERSION,
+            ['jquery', 'media-upload'],
+            time(),
             true
         );
     }
@@ -169,14 +171,19 @@ class Mikrotek_WP_Toolkit_Admin {
 
         echo '<table class="form-table mikrotek-wpt-form-table">';
         foreach ($fields as $key => $field) {
+            if (isset($field['type']) && 'html' === $field['type']) {
+                echo '<tr><td colspan="2" style="padding:10px 0;">';
+                if (!empty($field['content'])) {
+                    echo wp_kses_post($field['content']);
+                }
+                echo '</td></tr>';
+                continue;
+            }
+
             $value = Mikrotek_WP_Toolkit_Settings::get($key, isset($field['default']) ? $field['default'] : '');
             echo '<tr>';
             echo '<th scope="row">';
-            if ('checkbox' === $field['type']) {
-                echo '<label for="' . esc_attr($key) . '">' . esc_html($field['label']) . '</label>';
-            } else {
-                echo '<label for="' . esc_attr($key) . '">' . esc_html($field['label']) . '</label>';
-            }
+            echo '<label for="' . esc_attr($key) . '">' . esc_html(isset($field['label']) ? $field['label'] : '') . '</label>';
             echo '</th>';
             echo '<td>';
 
@@ -210,7 +217,7 @@ class Mikrotek_WP_Toolkit_Admin {
             }
 
             if (!empty($field['description'])) {
-                echo '<p class="description">' . esc_html($field['description']) . '</p>';
+                echo '<div class="description" style="margin-top:6px;font-size:13px;line-height:1.5;">' . wp_kses_post($field['description']) . '</div>';
             }
 
             echo '</td>';
@@ -305,10 +312,15 @@ class Mikrotek_WP_Toolkit_Admin {
                    name="<?php echo esc_attr(Mikrotek_WP_Toolkit_Settings::field_name($key)); ?>"
                    id="<?php echo esc_attr($key); ?>"
                    value="<?php echo esc_attr($value); ?>">
-            <button type="button" class="button button-secondary mikrotek-upload-button" data-target="<?php echo esc_attr($key); ?>">
+            <button type="button"
+                    class="button button-secondary mikrotek-upload-button"
+                    data-target="<?php echo esc_attr($key); ?>">
                 <?php esc_html_e('Upload / Select', 'mikrotek-wp-toolkit'); ?>
             </button>
-            <button type="button" class="button button-link-delete mikrotek-remove-button" data-target="<?php echo esc_attr($key); ?>" style="<?php echo $has_image ? '' : 'display:none;'; ?>">
+            <button type="button"
+                    class="button button-link-delete mikrotek-remove-button"
+                    data-target="<?php echo esc_attr($key); ?>"
+                    style="<?php echo $has_image ? '' : 'display:none;'; ?>">
                 <?php esc_html_e('Remove', 'mikrotek-wp-toolkit'); ?>
             </button>
             <div class="mikrotek-wpt-preview-wrap" id="<?php echo esc_attr($key); ?>_preview_wrap" style="<?php echo $has_image ? '' : 'display:none;'; ?>">
