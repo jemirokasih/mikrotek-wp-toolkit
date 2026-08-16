@@ -26,22 +26,30 @@
         $(document).on('click', '.mikrotek-upload-button, .mzi-upload-button', function(e) {
             e.preventDefault();
 
-            var target = $(this).data('target');
+            var $btn = $(this);
+            var target = $btn.attr('data-target') || $btn.data('target');
+
+            if (typeof wp === 'undefined' || !wp.media) {
+                alert('WordPress Media Uploader is loading or unavailable. Please refresh the page.');
+                return;
+            }
+
             var mediaUploader = wp.media({
-                title: typeof mikrotekMedia !== 'undefined' ? mikrotekMedia.title : 'Select Image',
+                title: 'Upload or Select Image',
                 button: {
-                    text: typeof mikrotekMedia !== 'undefined' ? mikrotekMedia.buttonText : 'Use this image'
+                    text: 'Use This Image'
                 },
                 multiple: false
             });
 
             mediaUploader.on('select', function() {
                 var attachment = mediaUploader.state().get('selection').first().toJSON();
-
-                $('#' + target).val(attachment.url).trigger('change');
-                $('#' + target + '_preview').attr('src', attachment.url);
-                $('#' + target + '_preview_wrap').fadeIn(200);
-                $('.mikrotek-remove-button[data-target="' + target + '"], .mzi-remove-button[data-target="' + target + '"]').show();
+                if (attachment && attachment.url) {
+                    $('#' + target).val(attachment.url).trigger('change');
+                    $('#' + target + '_preview').attr('src', attachment.url);
+                    $('#' + target + '_preview_wrap').show();
+                    $('[data-target="' + target + '"].mikrotek-remove-button, [data-target="' + target + '"].mzi-remove-button').show();
+                }
             });
 
             mediaUploader.open();
@@ -51,12 +59,13 @@
         $(document).on('click', '.mikrotek-remove-button, .mzi-remove-button', function(e) {
             e.preventDefault();
 
-            var target = $(this).data('target');
+            var $btn = $(this);
+            var target = $btn.attr('data-target') || $btn.data('target');
 
             $('#' + target).val('').trigger('change');
             $('#' + target + '_preview').attr('src', '');
-            $('#' + target + '_preview_wrap').fadeOut(200);
-            $(this).hide();
+            $('#' + target + '_preview_wrap').hide();
+            $btn.hide();
         });
     });
 })(jQuery);

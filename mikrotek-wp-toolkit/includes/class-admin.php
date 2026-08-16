@@ -102,21 +102,8 @@ class Mikrotek_WP_Toolkit_Admin {
     }
 
     public function enqueue_assets($hook) {
-        if (!in_array($hook, [
-            'toplevel_page_mikrotek-wp-toolkit',
-            'mikrotek-toolkit_page_mikrotek-wp-toolkit-tools',
-            'mikrotek-toolkit_page_mikrotek-wp-toolkit-redirects',
-            'mikrotek-toolkit_page_mikrotek-wp-toolkit-audit',
-            'mikrotek-toolkit_page_mikrotek-wp-toolkit-about',
-            'mikrotek-toolkit_page_mikrotek-wp-toolkit-shortcodes',
-            // Backward compatibility hook names
-            'toplevel_page_mzi-white-label',
-            'mzi-white-label_page_mzi-white-label-tools',
-            'mzi-white-label_page_mzi-white-label-redirects',
-            'mzi-white-label_page_mzi-white-label-audit',
-            'mzi-white-label_page_mzi-white-label-about',
-            'mzi-white-label_page_mzi-white-label-shortcodes'
-        ], true) && false === strpos($hook, 'mikrotek-wp-toolkit')) {
+        $page = isset($_GET['page']) ? sanitize_key($_GET['page']) : '';
+        if (empty($page) || (false === strpos($page, 'mikrotek-wp-toolkit') && false === strpos($page, 'mzi-white-label'))) {
             return;
         }
 
