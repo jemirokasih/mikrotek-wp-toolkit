@@ -6,6 +6,10 @@ if (!defined('ABSPATH')) {
 
 class Mikrotek_WP_Toolkit_Misc {
 
+    private static $cached_default_image_url = null;
+    private static $cached_default_attachment_id = null;
+    private static $in_meta_filter = false;
+
     public function __construct() {
         add_action('admin_init', [$this, 'init_misc_features']);
         add_action('admin_head', [$this, 'inject_misc_styles']);
@@ -13,8 +17,53 @@ class Mikrotek_WP_Toolkit_Misc {
         add_action('admin_head', [$this, 'remove_help_tabs']);
         add_filter('screen_options_show_screen', [$this, 'toggle_screen_options']);
 
+        // Default Featured Image hooks for WordPress Core & Elementor Widgets
         add_filter('has_post_thumbnail', [$this, 'default_has_post_thumbnail'], 10, 3);
+        add_filter('post_thumbnail_id', [$this, 'default_post_thumbnail_id'], 10, 2);
         add_filter('post_thumbnail_html', [$this, 'default_post_thumbnail_html'], 10, 5);
+        add_filter('post_thumbnail_url', [$this, 'default_post_thumbnail_url'], 10, 3);
+        add_filter('wp_get_attachment_image_src', [$this, 'default_attachment_image_src'], 10, 4);
+        add_filter('get_post_metadata', [$this, 'default_get_post_metadata'], 10, 4);
+
+        // Elementor Specific Image Fallback Filter
+        add_filter('elementor/image_size/get_attachment_image_html', [$this, 'default_elementor_image_html'], 10, 4);
+    }
+
+    private function get_default_image_url() {
+        if (self::$cached_default_image_url !== null) {
+            return self::$cached_default_image_url;
+        }
+
+        $default_image = Mikrotek_WP_Toolkit_Settings::get('default_featured_image');
+        self::$cached_default_image_url = !empty($default_image) ? (string) $default_image : '';
+        return self::$cached_default_image_url;
+    }
+
+    private function get_default_attachment_id() {
+        if (self::$cached_default_attachment_id !== null) {
+            return self::$cached_default_attachment_id;
+        }
+
+        $default_url = $this->get_default_image_url();
+        if (empty($default_url)) {
+            self::$cached_default_attachment_id = 0;
+            return 0;
+        }
+
+        if (is_numeric($default_url)) {
+            self::$cached_default_attachment_id = (int) $default_url;
+            return self::$cached_default_attachment_id;
+        }
+
+        $attachment_id = attachment_url_to_postid($default_url);
+        if ($attachment_id) {
+            self::$cached_default_attachment_id = (int) $attachment_id;
+            return self::$cached_default_attachment_id;
+        }
+
+        // Fallback ID for external image URLs to allow truthy check in get_post_thumbnail_id()
+        self::$cached_default_attachment_id = -99999;
+        return self::$cached_default_attachment_id;
     }
 
     public function init_misc_features() {
@@ -84,29 +133,58 @@ class Mikrotek_WP_Toolkit_Misc {
         return $show;
     }
 
-    public function default_has_post_thumbnail($has_thumbnail, $post, $thumbnail_id) {
+    public function default_has_post_thumbnail($has_thumbnail, $post = null, $thumbnail_id = null) {
         if ($has_thumbnail) {
             return true;
         }
 
-        $default_image = Mikrotek_WP_Toolkit_Settings::get('default_featured_image');
+        $default_url = $this->get_default_image_url();
 
-        return !empty($default_image);
+        return !empty($default_url);
     }
 
-    public function default_post_thumbnail_html($html, $post_id, $post_thumbnail_id, $size, $attr) {
+    public function default_post_thumbnail_id($thumbnail_id, $post = null) {
+        if (!empty($thumbnail_id)) {
+            return $thumbnail_id;
+        }
+
+        $default_id = $this->get_default_attachment_id();
+
+        return $default_id ? $default_id : $thumbnail_id;
+    }
+
+    public function default_get_post_metadata($value, $object_id, $meta_key, $single) {
+        if ($meta_key !== '_thumbnail_id' || self::$in_meta_filter || !empty($value)) {
+            return $value;
+        }
+
+        self::$in_meta_filter = true;
+        $has_meta = metadata_exists('post', $object_id, '_thumbnail_id');
+        self::$in_meta_filter = false;
+
+        if (!$has_meta) {
+            $default_id = $this->get_default_attachment_id();
+            if ($default_id) {
+                return $single ? $default_id : [$default_id];
+            }
+        }
+
+        return $value;
+    }
+
+    public function default_post_thumbnail_html($html, $post_id, $post_thumbnail_id, $size = 'post-thumbnail', $attr = '') {
         if (!empty($html)) {
             return $html;
         }
 
-        $default_image = Mikrotek_WP_Toolkit_Settings::get('default_featured_image');
-        if (empty($default_image)) {
+        $default_url = $this->get_default_image_url();
+        if (empty($default_url)) {
             return $html;
         }
 
-        $attachment_id = attachment_url_to_postid($default_image);
+        $attachment_id = $this->get_default_attachment_id();
 
-        if ($attachment_id) {
+        if ($attachment_id > 0) {
             $default_html = wp_get_attachment_image($attachment_id, $size, false, $attr);
             if (!empty($default_html)) {
                 return $default_html;
@@ -120,7 +198,61 @@ class Mikrotek_WP_Toolkit_Misc {
             }
         }
 
-        return '<img src="' . esc_url($default_image) . '" class="attachment-default wp-post-image mikrotek-default-featured-image"' . $attr_str . ' alt="">';
+        return '<img src="' . esc_url($default_url) . '" class="attachment-default wp-post-image mikrotek-default-featured-image"' . $attr_str . ' alt="">';
+    }
+
+    public function default_post_thumbnail_url($url, $post = null, $size = 'post-thumbnail') {
+        if (!empty($url)) {
+            return $url;
+        }
+
+        $attachment_id = $this->get_default_attachment_id();
+        if ($attachment_id > 0) {
+            $src = wp_get_attachment_image_src($attachment_id, $size);
+            if (!empty($src[0])) {
+                return $src[0];
+            }
+        }
+
+        return $this->get_default_image_url();
+    }
+
+    public function default_attachment_image_src($image, $attachment_id, $size = 'thumbnail', $icon = false) {
+        if (!empty($image)) {
+            return $image;
+        }
+
+        $default_id = $this->get_default_attachment_id();
+        $default_url = $this->get_default_image_url();
+
+        if (!empty($default_url) && ($attachment_id === $default_id || $attachment_id === -99999)) {
+            return [$default_url, 1200, 800, false];
+        }
+
+        return $image;
+    }
+
+    public function default_elementor_image_html($html, $settings = [], $image_key = 'image', $post = null) {
+        if (!empty($html)) {
+            return $html;
+        }
+
+        $default_url = $this->get_default_image_url();
+        if (empty($default_url)) {
+            return $html;
+        }
+
+        $size = !empty($settings[$image_key . '_size']) ? $settings[$image_key . '_size'] : 'full';
+        $attachment_id = $this->get_default_attachment_id();
+
+        if ($attachment_id > 0) {
+            $default_html = wp_get_attachment_image($attachment_id, $size);
+            if (!empty($default_html)) {
+                return $default_html;
+            }
+        }
+
+        return '<img src="' . esc_url($default_url) . '" class="attachment-default wp-post-image mikrotek-default-featured-image" alt="">';
     }
 }
 

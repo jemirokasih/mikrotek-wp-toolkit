@@ -4,7 +4,7 @@ Tags: white-label, branding, security, audit-trail, redirection
 Requires at least: 5.8
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 4.0.0
+Stable tag: 4.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -21,6 +21,10 @@ Mikrotek WP Toolkit helps replace default WordPress branding, simplify the admin
 3. Access 'Mikrotek Toolkit' in the admin menu to configure your settings.
 
 == Changelog ==
+
+= 4.0.1 =
+* Fixed Default Featured Image support for Elementor Posts, Loop Grid, Archive Posts, and Dynamic Image widgets.
+* Added fallback hooks for `post_thumbnail_id`, `get_post_metadata`, `post_thumbnail_url`, `wp_get_attachment_image_src`, and Elementor image rendering.
 
 = 4.0.0 =
 * Complete rebranding to 100% standalone Mikrotek WP Toolkit.

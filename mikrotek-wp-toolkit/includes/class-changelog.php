@@ -12,6 +12,12 @@ class Mikrotek_WP_Toolkit_Changelog {
 
     public static function entries() {
         return [
+            '4.0.1' => [
+                'Fixed' => [
+                    'Perbaikan fitur Default Featured Image agar terpanggil sempurna di widget Elementor Posts, Loop Grid, Archive Posts, Portfolio, dan Dynamic Tags.',
+                    'Penambahan fallback filter WordPress Core & Elementor: `post_thumbnail_id`, `get_post_metadata`, `post_thumbnail_url`, `wp_get_attachment_image_src`, serta `elementor/image_size/get_attachment_image_html`.',
+                ],
+            ],
             '4.0.0' => [
                 'Rebranding' => [
                     'Resmi diluncurkan sebagai 100% Standalone Plugin Mikrotek WP Toolkit.',
